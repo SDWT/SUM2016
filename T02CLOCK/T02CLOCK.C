@@ -3,6 +3,7 @@
  * DATE: 02.06.2016
  * PURPOSE: Clock
  */
+#include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include <windows.h>
@@ -97,7 +98,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   HDC hDC;
   PAINTSTRUCT ps;
   HPEN hPen, hOldPen;
-  CHAR Str[50], StrBuf[50], StrDays[7][50] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+  static CHAR Str[50], StrBuf[50], StrDays[7][50] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
   static INT w = 1600, h = 800, r = 15;
   static DOUBLE len, mn = 0, mx = 0, x = 0, y = 0;
   static BOOL IsEyes = 1;
@@ -191,39 +192,10 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     DeleteObject(hPen);
 
     SetBkMode(hMemDC, TRANSPARENT);
-    StrBuf[0] = 'T';
-    StrBuf[1] = 0;
-    /* Copy day name  */
-    strcpy(StrBuf, StrDays[(ST.wDayOfWeek - 1) % 7]);
-    strcat(StrBuf, " "); 
-    /* Copy date */
-    Str[1] = '0' + ST.wDay % 10;
-    Str[0] = '0' + (ST.wDay / 10) % 10;
-    Str[2] = '.';
-    Str[4] = '0' + ST.wMonth % 10;
-    Str[3] = '0' + (ST.wMonth / 10) % 10;
-    Str[5] = '.';
-    Str[9] = '0' + ST.wYear % 10;
-    Str[8] = '0' + (ST.wYear / 10) % 10;
-    Str[7] = '0' + (ST.wYear / 100) % 10;
-    Str[6] = '0' + (ST.wYear / 1000) % 10;
-    Str[10] = ' ';
-    Str[11] = 0;
-    strcat(StrBuf, Str); 
-    /* Copy time */
-    Str[1] = '0' + ST.wHour % 10;
-    Str[0] = '0' + (ST.wHour / 10) % 10;
-    Str[2] = ':';
-    Str[4] = '0' + ST.wMinute % 10;
-    Str[3] = '0' + (ST.wMinute / 10) % 10;
-    Str[5] = '.';
-    Str[7] = '0' + ST.wSecond % 10;
-    Str[6] = '0' + (ST.wSecond / 10) % 10;
-    Str[8] = 0;
-    strcat(StrBuf, Str); 
-    /* Write date and time on display */
     
-    TextOut(hMemDC, 2, 5/*h - h / 30*/, StrBuf, strlen(StrBuf));
+    /* Write date and time on display */
+    TextOut(hMemDC, 2, 5, StrBuf, sprintf(StrBuf, "%s, %02d.%02d.%04d %02d:%02d.%02d", StrDays[(ST.wDayOfWeek - 1) % 7], 
+                                                  ST.wDay, ST.wMonth, ST.wYear, ST.wHour, ST.wMinute, ST.wSecond));
 
     InvalidateRect(hWnd, NULL, FALSE);
     return 0;

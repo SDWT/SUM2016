@@ -63,13 +63,14 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
     MessageBox(NULL, "Create window error", "ERROR", MB_OK | MB_ICONERROR);
     return 0;
   }
+  /*
   CreateWindow("Button",
     "Eyes",
     WS_CHILDWINDOW | WS_VISIBLE,
     20, 20,
     50, 20,
     hWnd, NULL, hInstance, NULL);
-
+  */
   /* Show window */
   ShowWindow(hWnd, SW_SHOWNORMAL);
   /* Update window */
@@ -150,8 +151,8 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   static DOUBLE len, mn = 0, mx = 0, x = 0, y = 0;
   static BOOL IsEyes = 1;
   static BITMAP Bm;
-  static HBITMAP hBm, hBmLogo;
-  static HDC hMemDC, hMemDCLogo;
+  static HBITMAP hBm = NULL;
+  static HDC hMemDC;
 
   switch (Msg)
   {
@@ -159,11 +160,6 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     SetTimer(hWnd, 30, 10, NULL);
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
-    hBmLogo = LoadImage(NULL, "C.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    hMemDCLogo = CreateCompatibleDC(hDC);
-    hBmLogo = CreateCompatibleBitmap(hDC, w, h);
-    SelectObject(hMemDCLogo, hBmLogo);
-    GetObject(hBmLogo, sizeof(Bm), &Bm);;
     ReleaseDC(hWnd, hDC);
     return 0;
   case WM_COMMAND:
@@ -245,7 +241,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
       for (i = -2; i <= 2; i++)
         for (j = -2; j <= 2; j++)
           Eyes(hWnd, hMemDC, w / 2 + i * w / 6, h / 2 + j * h / 6, 40, 10);
-    
+
     InvalidateRect(hWnd, NULL, FALSE);
     return 0;
   }

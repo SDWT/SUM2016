@@ -11,7 +11,7 @@
 
 /* Forward reference */
 LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam );
-VOID Arrow( HWND hWnd, HDC hDC, INT X, INT Y, INT H1, INT H2, INT W, COLORREF ColorN,  COLORREF ColorS );
+VOID Arrow( HWND hWnd, HDC hDC, INT X, INT Y, INT H1, INT H2, INT W, COLORREF ColorN, COLORREF ColorS );
 
 /* Main program function
  * ARGUMENTS:
@@ -136,6 +136,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
                             WPARAM wParam, LPARAM lParam )
 {
   INT i, j;
+  static INT n = 2, fl = 1;
   HDC hDC;
   PAINTSTRUCT ps;
   static INT w = 1600, h = 800, r = 15;
@@ -185,6 +186,13 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   case WM_MOUSEMOVE:
     /*InvalidateRect(hWnd, NULL, TRUE);*/
     return 0;
+  case WM_KEYDOWN:
+    n += fl;
+    if (n >= 10)
+      fl = -1;
+    if (n <= 1)
+      fl = 1;
+    return 0;
   case WM_PAINT:
     hDC = BeginPaint(hWnd, &ps);
     BitBlt(hDC, 0, 0, w, h, hMemDC, 0, 0, SRCCOPY);
@@ -208,9 +216,9 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     SetDCPenColor(hMemDC, RGB(0, 0, 0));
     SetDCBrushColor(hMemDC, RGB(255, 255, 255));
 
-    for (i = -2; i <= 2; i++)
-      for (j = -2; j <= 2; j++)
-        Arrow(hWnd, hMemDC, w / 2 + w / 6 * i, h / 2 + h / 6 * j, 80, 40, 50, RGB(0, 0, 255), RGB(255, 0, 0));
+    for (i = -n; i <= n; i++)
+      for (j = -n; j <= n; j++)
+        Arrow(hWnd, hMemDC, w / 2 + w / 2 / (n + 1) * i, h / 2 + h / 2 / (n + 1) * j, 160 / n, 80 / n, 100 / n, RGB(0, 0, 255), RGB(255, 0, 0));
     /* Logo */
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCAND, 0, 0, SRCAND);
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCXOR, 0, 0, SRCINVERT);
@@ -222,8 +230,27 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   return DefWindowProc(hWnd, Msg, wParam, lParam);
 }/* End of 'MyWinFunc' function */
 
-
-VOID Arrow( HWND hWnd, HDC hDC, INT X, INT Y, INT H1, INT H2, INT W, COLORREF ColorN,  COLORREF ColorS )
+/* Callback my class function 
+ *  -  Handle window:
+ *       HWND hWnd;
+ *  -  Handle d c:
+ *       HDC hDC;
+ *  -  X center arrow:
+ *       INT X;
+ *  -  Y center arrow:
+ *       INT Y;
+ *  -  North height:
+ *        INT H1;
+ *  -  South height:
+ *        INT H2;
+ *  -  Width arrow:
+ *        INT W;
+ *  -  North Color RGB(r, g, b):
+ *       COLORREF ColorN;
+ *  -  South Color RGB(r, g, b):
+ *       COLORREF ColorS;
+ */
+VOID Arrow( HWND hWnd, HDC hDC, INT X, INT Y, INT H1, INT H2, INT W, COLORREF ColorN, COLORREF ColorS )
 {
   DOUBLE rM, r = H1, xM, yM, iX, iY;
   POINT pN[3], pS[3], pO[4], pt;
