@@ -104,6 +104,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   static BITMAP Bm;
   static HBITMAP hBm, hBmLogo;
   static HDC hMemDC, hMemDCLogo;
+  /*static LOGFONT font;*/
   SYSTEMTIME ST;
  
   switch (Msg)
@@ -148,17 +149,12 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     KillTimer(hWnd, 30);
     DeleteObject(hBm);
     DeleteObject(hMemDC);
+    DeleteObject(hBmLogo);
+    DeleteObject(hMemDCLogo);
     PostMessage(hWnd, WM_QUIT, 0, 0);
     return 0;
   case WM_TIMER:
     /*Drawing*/
-    /*
-    SetDCPenColor(hMemDC, RGB(0, 0, 0));
-    SetDCBrushColor(hMemDC, RGB(0, 0, 0));
-    Rectangle(hMemDC, 0, 0, w, h);
-    SetDCPenColor(hMemDC, RGB(0, 0, 0));
-    SetDCBrushColor(hMemDC, RGB(255, 255, 255));
-    */
     StretchBlt(hMemDC, 0, 0, w, h, hMemDCLogo, 0, 0,  Bm.bmWidth, Bm.bmHeight, SRCCOPY);
     /*BitBlt(hMemDC, 0, 0, Bm.bmWidth, Bm.bmHeight, hMemDCLogo, 0, 0, SRCCOPY);*/
     
@@ -188,8 +184,8 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     hOldPen = SelectObject(hMemDC, hPen);
 
     MoveToEx(hMemDC, w / 2, h / 2, NULL);
-    LineTo(hMemDC, (INT)(w / 2 + w / 3 * sin(6.0 * (ST.wSecond * 1000 + ST.wMilliseconds) / 1000 * DS1_PI / 180)), 
-             (INT)(h / 2 - h / 3 * cos(6.0 * (ST.wSecond * 1000 + ST.wMilliseconds) / 1000 * DS1_PI / 180)));
+    LineTo(hMemDC, (INT)(w / 2 + w / 3 * sin(6.0 * (ST.wSecond + ST.wMilliseconds / 1000.0) * DS1_PI / 180)), 
+             (INT)(h / 2 - h / 3 * cos(6.0 * (ST.wSecond + ST.wMilliseconds / 1000.0) * DS1_PI / 180)));
     
     SelectObject(hMemDC, hOldPen);
     DeleteObject(hPen);
@@ -226,7 +222,8 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     Str[8] = 0;
     strcat(StrBuf, Str); 
     /* Write date and time on display */
-    TextOut(hMemDC, 2, h - h / 30, StrBuf, strlen(StrBuf));
+    
+    TextOut(hMemDC, 2, 5/*h - h / 30*/, StrBuf, strlen(StrBuf));
 
     InvalidateRect(hWnd, NULL, FALSE);
     return 0;
