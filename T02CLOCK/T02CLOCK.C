@@ -274,15 +274,12 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     DeleteObject(hPen);
 
     SetBkMode(hMemDC, TRANSPARENT);
-    
     /* Write date and time on display */
     TextOut(hMemDC, 2, h - h / 30, StrBuf, sprintf(StrBuf, "%s, %02d.%02d.%04d %02d:%02d.%02d", StrDays[(ST.wDayOfWeek - 1) % 7], 
                                                   ST.wDay, ST.wMonth, ST.wYear, ST.wHour, ST.wMinute, ST.wSecond));
-
     /* Logo */
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCAND, 0, 0, SRCAND);
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCXOR, 0, 0, SRCINVERT);
-
 
     InvalidateRect(hWnd, NULL, FALSE);
     return 0;
