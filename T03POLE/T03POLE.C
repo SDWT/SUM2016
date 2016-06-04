@@ -380,4 +380,4 @@ VOID Arrow( HWND hWnd, HDC hDC, INT X, INT Y, INT H1, INT H2, INT W, COLORREF Co
 }/* End of 'Arrow' function */
 
 
-/* END OF 'T01EYES.C' FILE */
+/* END OF 'T03EYES.C' FILE */
