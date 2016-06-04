@@ -4,6 +4,7 @@
  * PURPOSE: Magnetic pole to cursor
  */
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <windows.h>
 
@@ -180,6 +181,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
                             WPARAM wParam, LPARAM lParam )
 {
   INT i, j;
+  CHAR StrBuf[30];
   HDC hDC;
   PAINTSTRUCT ps;
   SYSTEMTIME ST;
@@ -248,9 +250,9 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
       FlipFullScreen(hWnd);
     else if (LOWORD(wParam) == VK_ESCAPE)
       DestroyWindow(hWnd);
-    else if (LOWORD(wParam) == '+')
+    else if (LOWORD(wParam) == '9' && n < 30)
       n += fl;
-    else if (LOWORD(wParam) == '-')
+    else if (LOWORD(wParam) == '0' && n > 1)
       n -= fl;
     return 0;
   case WM_PAINT:
@@ -284,6 +286,11 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
       for (j = -n; j <= n; j++)
         Arrow(hWnd, hMemDC, w / 2 + w / 2 / (n + 1) * i, h / 2 + h / 2 / (n + 1) * j, 160 / n, 80 / n, 100 / n, 
               RGB(rand() % 255, rand() % 255, rand() % 255), RGB(rand() % 255, rand() % 255, rand() % 255));
+
+    SetBkMode(hMemDC, TRANSPARENT);
+    /* Write date and time on display */
+    TextOut(hMemDC, 2, h - h / 30, StrBuf, sprintf(StrBuf, "Count of arrows: %2d", (2 * n + 1) * (2 * n + 1)));
+
     /* Logo */
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCAND, 0, 0, SRCAND);
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCXOR, 0, 0, SRCINVERT);
@@ -370,8 +377,6 @@ VOID Arrow( HWND hWnd, HDC hDC, INT X, INT Y, INT H1, INT H2, INT W, COLORREF Co
   
   SelectObject(hDC, hPen);
   SelectObject(hDC, hBrush);
-
-
 }/* End of 'Arrow' function */
 
 
