@@ -8,6 +8,8 @@
 #include <string.h>
 #include <windows.h>
 
+#include "resource.h"
+
 /* My window class */
 #define MY_WND_CLASS "My Window Class"
 #define DS1_PI 3.14159265358979323846
@@ -82,6 +84,48 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   return 0;
 }/* End of 'WinMain' function */
 
+/* Set/reset full screen mode function */
+VOID FlipFullScreen( HWND hWnd )
+{
+  static BOOL IsFullScreen = FALSE;
+  static RECT SaveRect;
+
+  if (IsFullScreen)
+  {
+    /* restore window size */
+    SetWindowPos(hWnd, HWND_TOP,
+      SaveRect.left, SaveRect.top,
+      SaveRect.right - SaveRect.left, SaveRect.bottom - SaveRect.top,
+      SWP_NOOWNERZORDER);
+  }
+  else
+  {
+    /* Set full screen size to window */
+    HMONITOR hmon;
+    MONITORINFOEX moninfo;
+    RECT rc;
+
+    /* Store window old size */
+    GetWindowRect(hWnd, &SaveRect);
+
+    /* Get nearest monitor */
+    hmon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+
+    /* Obtain monitor info */
+    moninfo.cbSize = sizeof(moninfo);
+    GetMonitorInfo(hmon, (MONITORINFO *)&moninfo);
+
+    /* Set window new size */
+    rc = moninfo.rcMonitor;
+    AdjustWindowRect(&rc, GetWindowLong(hWnd, GWL_STYLE), FALSE);
+
+    SetWindowPos(hWnd, HWND_TOPMOST,
+      rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
+      SWP_NOOWNERZORDER);
+  }
+  IsFullScreen = !IsFullScreen;
+} /* End of 'FlipFullScreen' function */
+
 /* Callback my class function 
  *  -  Handle window:
  *       HWND hWnd;
@@ -98,27 +142,55 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   HDC hDC;
   PAINTSTRUCT ps;
   HPEN hPen, hOldPen;
+  SYSTEMTIME ST;
+  CREATESTRUCT *cs;
+  MINMAXINFO *MinMax;
   static CHAR Str[50], StrBuf[50], StrDays[7][50] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
   static INT w = 1600, h = 800, r = 15;
   static DOUBLE len, mn = 0, mx = 0, x = 0, y = 0;
   static BOOL IsEyes = 1;
-  static BITMAP Bm;
-  static HBITMAP hBm, hBmLogo;
-  static HDC hMemDC, hMemDCLogo;
+  static BITMAP Bm, bmS;
+  static HBITMAP hBm, hBmAND, hBmXOR, hBmLogo;
+  static HDC hMemDC, hMemDCAND, hMemDCXOR, hMemDCLogo;
   /*static LOGFONT font;*/
-  SYSTEMTIME ST;
  
   switch (Msg)
   {
+  case WM_GETMINMAXINFO:
+    MinMax = (MINMAXINFO *)lParam;
+    MinMax->ptMaxTrackSize.y =
+      GetSystemMetrics(SM_CYMAXTRACK) +
+      GetSystemMetrics(SM_CYCAPTION) +
+      GetSystemMetrics(SM_CYMENU) +
+      GetSystemMetrics(SM_CYBORDER) * 2;
+  return 0;
   case WM_CREATE:
     SetTimer(hWnd, 30, 10, NULL);
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
+    cs = (CHAR *)lParam;
+    /*
     hBmLogo = LoadImage(NULL, "C.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    */
+    hBmLogo = LoadImage(cs->hInstance, (CHAR *)IDB_CLOCKFACE, IMAGE_BITMAP, 0, 0, 0);
     hMemDCLogo = CreateCompatibleDC(hDC);
     SelectObject(hMemDCLogo, hBmLogo);
-    GetObject(hBmLogo, sizeof(Bm), &Bm);;
+    GetObject(hBmLogo, sizeof(bmS), &bmS);;
+
+    /*hBmAND = LoadImage(NULL, "SDAND.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
+    hBmAND = LoadImage(cs->hInstance, (CHAR *)IDB_AND, IMAGE_BITMAP, 0, 0, 0);
+    hMemDCAND = CreateCompatibleDC(hDC);
+    SelectObject(hMemDCAND, hBmAND);
+    GetObject(hBmAND, sizeof(Bm), &Bm);;
+
+    /*hBmXOR = LoadImage(NULL, "SDXOR.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
+    hBmXOR = LoadImage(cs->hInstance, (CHAR *)IDB_XOR, IMAGE_BITMAP, 0, 0, 0);
+    hMemDCXOR = CreateCompatibleDC(hDC);
+    SelectObject(hMemDCXOR, hBmXOR);
+
     ReleaseDC(hWnd, hDC);
+    /* Fullscreen on */
+    FlipFullScreen(hWnd);
     return 0;
   case WM_COMMAND:
     IsEyes = !IsEyes;
@@ -126,6 +198,12 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     return 0;
   case WM_ERASEBKGND:
     /*InvalidateRect(hWnd, NULL, FALSE);*/
+    return 0;
+  case WM_KEYDOWN:
+    if (LOWORD(wParam) == 'F')
+      FlipFullScreen(hWnd);
+    else if (LOWORD(wParam) == VK_ESCAPE)
+      DestroyWindow(hWnd);
     return 0;
   case WM_SIZE:
     w = LOWORD(lParam);
@@ -152,11 +230,15 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     DeleteObject(hMemDC);
     DeleteObject(hBmLogo);
     DeleteObject(hMemDCLogo);
+    DeleteObject(hBmAND);
+    DeleteObject(hMemDCAND);
+    DeleteObject(hBmXOR);
+    DeleteObject(hMemDCXOR);
     PostMessage(hWnd, WM_QUIT, 0, 0);
     return 0;
   case WM_TIMER:
     /*Drawing*/
-    StretchBlt(hMemDC, 0, 0, w, h, hMemDCLogo, 0, 0,  Bm.bmWidth, Bm.bmHeight, SRCCOPY);
+    StretchBlt(hMemDC, 0, 0, w, h, hMemDCLogo, 0, 0,  bmS.bmWidth, bmS.bmHeight, SRCCOPY);
     /*BitBlt(hMemDC, 0, 0, Bm.bmWidth, Bm.bmHeight, hMemDCLogo, 0, 0, SRCCOPY);*/
     
     GetLocalTime(&ST);
@@ -194,8 +276,13 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     SetBkMode(hMemDC, TRANSPARENT);
     
     /* Write date and time on display */
-    TextOut(hMemDC, 2, 5, StrBuf, sprintf(StrBuf, "%s, %02d.%02d.%04d %02d:%02d.%02d", StrDays[(ST.wDayOfWeek - 1) % 7], 
+    TextOut(hMemDC, 2, h - h / 30, StrBuf, sprintf(StrBuf, "%s, %02d.%02d.%04d %02d:%02d.%02d", StrDays[(ST.wDayOfWeek - 1) % 7], 
                                                   ST.wDay, ST.wMonth, ST.wYear, ST.wHour, ST.wMinute, ST.wSecond));
+
+    /* Logo */
+    BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCAND, 0, 0, SRCAND);
+    BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCXOR, 0, 0, SRCINVERT);
+
 
     InvalidateRect(hWnd, NULL, FALSE);
     return 0;

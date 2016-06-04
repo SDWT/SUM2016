@@ -3,8 +3,11 @@
  * DATE: 03.06.2016
  * PURPOSE: Magnetic pole to cursor
  */
+#include <stdlib.h>
 #include <math.h>
 #include <windows.h>
+
+#include "resource.h"
 
 /* My window class */
 #define MY_WND_CLASS "My Window Class"
@@ -120,6 +123,47 @@ VOID Eyes( HWND hWnd, HDC hDC, INT Xc, INT Yc, INT R, INT R1 )
     
 }/* End of 'Eyes' function */
 
+/* Set/reset full screen mode function */
+VOID FlipFullScreen( HWND hWnd )
+{
+  static BOOL IsFullScreen = FALSE;
+  static RECT SaveRect;
+
+  if (IsFullScreen)
+  {
+    /* restore window size */
+    SetWindowPos(hWnd, HWND_TOP,
+      SaveRect.left, SaveRect.top,
+      SaveRect.right - SaveRect.left, SaveRect.bottom - SaveRect.top,
+      SWP_NOOWNERZORDER);
+  }
+  else
+  {
+    /* Set full screen size to window */
+    HMONITOR hmon;
+    MONITORINFOEX moninfo;
+    RECT rc;
+
+    /* Store window old size */
+    GetWindowRect(hWnd, &SaveRect);
+
+    /* Get nearest monitor */
+    hmon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+
+    /* Obtain monitor info */
+    moninfo.cbSize = sizeof(moninfo);
+    GetMonitorInfo(hmon, (MONITORINFO *)&moninfo);
+
+    /* Set window new size */
+    rc = moninfo.rcMonitor;
+    AdjustWindowRect(&rc, GetWindowLong(hWnd, GWL_STYLE), FALSE);
+
+    SetWindowPos(hWnd, HWND_TOPMOST,
+      rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
+      SWP_NOOWNERZORDER);
+  }
+  IsFullScreen = !IsFullScreen;
+} /* End of 'FlipFullScreen' function */
 
 
 /* Callback my class function 
@@ -136,32 +180,45 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
                             WPARAM wParam, LPARAM lParam )
 {
   INT i, j;
-  static INT n = 2, fl = 1;
   HDC hDC;
   PAINTSTRUCT ps;
+  SYSTEMTIME ST;
+  CREATESTRUCT *cs;
+  MINMAXINFO *MinMax;
+  static INT n = 2, fl = 1;
   static INT w = 1600, h = 800, r = 15;
   static DOUBLE len, mn = 0, mx = 0, x = 0, y = 0;
   static BOOL IsEyes = 1;
   static BITMAP Bm;
   static HBITMAP hBm, hBmAND, hBmXOR;
   static HDC hMemDC, hMemDCAND, hMemDCXOR;
-
+  
   switch (Msg)
   {
+  case WM_GETMINMAXINFO:
+    MinMax = (MINMAXINFO *)lParam;
+    MinMax->ptMaxTrackSize.y =
+      GetSystemMetrics(SM_CYMAXTRACK) +
+      GetSystemMetrics(SM_CYCAPTION) +
+      GetSystemMetrics(SM_CYMENU) +
+      GetSystemMetrics(SM_CYBORDER) * 2;
+    return 0;
   case WM_CREATE:
     SetTimer(hWnd, 30, 10, NULL);
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
-    
-    hBmAND = LoadImage(NULL, "SDAND.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+    cs = (CHAR *)lParam;
+    /*hBmAND = LoadImage(NULL, "SDAND.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
+    hBmAND = LoadImage(cs->hInstance, (CHAR *)IDB_AND, IMAGE_BITMAP, 0, 0, 0);
     hMemDCAND = CreateCompatibleDC(hDC);
     SelectObject(hMemDCAND, hBmAND);
     GetObject(hBmAND, sizeof(Bm), &Bm);;
 
-    hBmXOR = LoadImage(NULL, "SDXOR.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+    /*hBmXOR = LoadImage(NULL, "SDXOR.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
+    hBmXOR = LoadImage(cs->hInstance, (CHAR *)IDB_XOR, IMAGE_BITMAP, 0, 0, 0);
     hMemDCXOR = CreateCompatibleDC(hDC);
     SelectObject(hMemDCXOR, hBmXOR);
-    
 
     ReleaseDC(hWnd, hDC);
     return 0;
@@ -187,11 +244,14 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     /*InvalidateRect(hWnd, NULL, TRUE);*/
     return 0;
   case WM_KEYDOWN:
-    n += fl;
-    if (n >= 10)
-      fl = -1;
-    if (n <= 1)
-      fl = 1;
+    if (LOWORD(wParam) == 'F')
+      FlipFullScreen(hWnd);
+    else if (LOWORD(wParam) == VK_ESCAPE)
+      DestroyWindow(hWnd);
+    else if (LOWORD(wParam) == '+')
+      n += fl;
+    else if (LOWORD(wParam) == '-')
+      n -= fl;
     return 0;
   case WM_PAINT:
     hDC = BeginPaint(hWnd, &ps);
@@ -216,9 +276,14 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     SetDCPenColor(hMemDC, RGB(0, 0, 0));
     SetDCBrushColor(hMemDC, RGB(255, 255, 255));
 
+    GetLocalTime(&ST);
+
+    srand(ST.wSecond);
+
     for (i = -n; i <= n; i++)
       for (j = -n; j <= n; j++)
-        Arrow(hWnd, hMemDC, w / 2 + w / 2 / (n + 1) * i, h / 2 + h / 2 / (n + 1) * j, 160 / n, 80 / n, 100 / n, RGB(0, 0, 255), RGB(255, 0, 0));
+        Arrow(hWnd, hMemDC, w / 2 + w / 2 / (n + 1) * i, h / 2 + h / 2 / (n + 1) * j, 160 / n, 80 / n, 100 / n, 
+              RGB(rand() % 255, rand() % 255, rand() % 255), RGB(rand() % 255, rand() % 255, rand() % 255));
     /* Logo */
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCAND, 0, 0, SRCAND);
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCXOR, 0, 0, SRCINVERT);
@@ -263,8 +328,8 @@ VOID Arrow( HWND hWnd, HDC hDC, INT X, INT Y, INT H1, INT H2, INT W, COLORREF Co
 
   xM = pt.x - X, yM = pt.y - Y;
   rM = sqrt(xM * xM + yM * yM);
-  xM /= rM; /*sin(a)*/
-  yM /= -rM; /*cos(a)*/
+  xM /= rM;  /* sin(a) */
+  yM /= -rM; /* cos(a) */
 
   iX = 0 * yM - (0 + H2) * xM;
   iY = 0 * xM + (0 + H2) * yM;
