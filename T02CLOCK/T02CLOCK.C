@@ -145,7 +145,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   SYSTEMTIME ST;
   CREATESTRUCT *cs;
   MINMAXINFO *MinMax;
-  static CHAR Str[50], StrBuf[50], StrDays[7][50] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+  static CHAR Str[50], StrBuf[50], StrDays[][50] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
   static INT w = 1600, h = 800, r = 15;
   static DOUBLE len, mn = 0, mx = 0, x = 0, y = 0;
   static BOOL IsEyes = 1;
@@ -275,7 +275,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
 
     SetBkMode(hMemDC, TRANSPARENT);
     /* Write date and time on display */
-    TextOut(hMemDC, 2, h - h / 30, StrBuf, sprintf(StrBuf, "%s, %02d.%02d.%04d %02d:%02d.%02d", StrDays[(ST.wDayOfWeek - 1) % 7], 
+    TextOut(hMemDC, 2, h - h / 30, StrBuf, sprintf(StrBuf, "%s, %02d.%02d.%04d %02d:%02d.%02d", StrDays[ST.wDayOfWeek % 7], 
                                                   ST.wDay, ST.wMonth, ST.wYear, ST.wHour, ST.wMinute, ST.wSecond));
     /* Logo */
     BitBlt(hMemDC, -70, -90, Bm.bmWidth, Bm.bmHeight, hMemDCAND, 0, 0, SRCAND);
