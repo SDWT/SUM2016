@@ -1,7 +1,7 @@
 /* FILENAME: T05DET.C
  * PROGRAMMER: DS1
  * DATE: 06.06.2016
- * PURPOSE: 
+ * PURPOSE: Eval determinant
  */
 
 #include <stdlib.h>
@@ -141,7 +141,7 @@ void Go2( int Pos )
     PIs[i] = 0;
   }
 
-}/* End of 'Go' function */
+}/* End of 'Go2' function */
 
 /* Rec func perm 
  * ARGUMENTS:
@@ -218,4 +218,4 @@ void main( void )
   fclose(F);
 }/* End of 'main' function */
 
-/* END OF 'T04PERM.C' FILE */
+/* END OF 'T05DET.C' FILE */

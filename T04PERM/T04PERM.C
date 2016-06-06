@@ -111,7 +111,7 @@ void Go2( int Pos )
     Go2(Pos+1);
     PIs[i] = 0;
   }
-}/* End of 'Go' function */
+}/* End of 'Go2' function */
 
 /* Rec func perm 
  * ARGUMENTS:
