@@ -1,6 +1,6 @@
-/* FILENAME: T04PERM.C
+/* FILENAME: T05DET.C
  * PROGRAMMER: DS1
- * DATE: 04.06.2016
+ * DATE: 06.06.2016
  * PURPOSE: 
  */
 
@@ -8,10 +8,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#define N 5
+#define MAX 10
 
-int Parity = 0, P[N], PIs[N];
-FILE *F;
+int Parity = 0, P[MAX], PIs[MAX], N = 0;
+double A[MAX][MAX], Sum = 0;
 
 /* Swap to int numbers function 
  * ARGUMENTS:
@@ -30,24 +30,50 @@ void Swap( int *A, int *B )
   *B = tmp;
 }/* End of 'Swap' function */
 
-/* Write perseption to file function 
+/* Load matrix function
  * ARGUMENTS:
- *  - None;
+ *  - :
+ *    char *FileName
  * RETURNS:
- *   None;
+ *   (int);
  */
-void PermToFile( void )
+int LoadMatrix( char *FileName )
+{
+  int i, j;
+  FILE *F;
+
+  printf("File: %s\n", FileName);
+  if ((F = fopen(FileName, "r")) == NULL)
+  {
+    printf("Error reading file.\n");
+    return 0;
+  }
+  fscanf(F, "%d", &N);
+  printf("Matrix:\n");
+  for (i = 0; i < N; i++, printf("\n"))
+    for (j = 0; j < N; j++)
+    {
+      fscanf(F, "%lf", &A[i][j]);
+      printf("%8.6lf ", A[i][j]);
+    }
+  return 1;
+}/* End of 'LoadMatrix' function */
+
+/* Load matrix function
+ * ARGUMENTS:
+ *  - :
+ *    char *FileName
+ * RETURNS:
+ *   (int);
+ */
+void CountDeterminant( void )
 {
   int i;
-  static double count = 0;
+  double prod = 1;
 
-  
-  for (i = 0; i < N - 1; i++)
-    {
-      fprintf(F, "%d, ", P[i]);
-    }
-  fprintf(F, "%d; Parity Even Odd = %d\n", P[i], Parity % 2);
-  count++;
+  for (i = 0; i < N; i++)
+    prod *= A[i][P[i]];
+  Sum += (Parity % 2) ? -prod : prod;
 }/* End of 'PermToFile' function */
 
 
@@ -63,7 +89,9 @@ void Go( int Pos )
   int i, j;
 
   if (N == Pos)
-    PermToFile();
+  {
+    CountDeterminant();
+  }
   else
     for (i = Pos; i < N; i++)
     {
@@ -94,7 +122,8 @@ void Go2( int Pos )
       for (j = i + 1; j < N; j++)
         if (P[i] > P[j])
           Parity++;
-    PermToFile();
+
+    CountDeterminant();
     Parity = 0;
     return;
   }
@@ -107,10 +136,11 @@ void Go2( int Pos )
       return;
     j = i;
     PIs[i] = 1;
-    P[Pos] = i + 1;
+    P[Pos] = i;
     Go2(Pos+1);
     PIs[i] = 0;
   }
+
 }/* End of 'Go' function */
 
 /* Rec func perm 
@@ -126,7 +156,7 @@ void Go3( int Pos )
 
   if (N == Pos)
   {
-    PermToFile();
+    CountDeterminant();
     return;
   }
   SaveParity = Parity;
@@ -145,6 +175,21 @@ void Go3( int Pos )
   Parity = SaveParity;
 }/* End of 'Go3' function */
 
+double EvalDeterminant( char *FileName )
+{
+  int i;
+  Sum  = 0;
+  Parity = 0;
+  if (LoadMatrix(FileName) == 0)
+    return -0;
+  for (i = 0; i < N; i++)
+  {
+    P[i] = i;
+    PIs[i] = 0;
+  }
+  Go3(0);
+  return Sum;
+}
 
 /* Main program function 
  * ARGUMENTS:
@@ -154,16 +199,22 @@ void Go3( int Pos )
  */
 void main( void )
 {
-  int i;
-  if ((F = fopen("perm.log", "w")) == NULL)
-    return;
+  int i, k;
+  double d = 0;
+  char *M[] = {"mat1.txt", "mat2.txt", "mat3.txt", "mat4.txt", 
+               "m.txt", "m1.txt", "m2.txt", "m3.txt", "m4.txt", 
+                        "m5.txt", "m6.txt", "m7.txt", "m8.txt"};
+  FILE *F;
 
-  for (i = 0; i < N; i++)
+  k = sizeof(M) / sizeof(M[0]);
+  if ((F = fopen("ds1_answers2.txt", "w")) == NULL)
+    return;
+  for (i = 0; i < k; i++)
   {
-    P[i] = i + 1;
-    PIs[i] = 0;
+    printf("File: %s, Determinant: %lf\n\n", M[i], d = EvalDeterminant(M[i]));
+    fprintf(F, "File: %10s, Determinant: %20.6lf\n", M[i], d);
   }
-  Go3(0);
+  i = 0;
   fclose(F);
 }/* End of 'main' function */
 
