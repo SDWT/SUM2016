@@ -30,6 +30,23 @@ void Swap( int *A, int *B )
   *B = tmp;
 }/* End of 'Swap' function */
 
+/* Swap to double numbers function 
+ * ARGUMENTS:
+ *  - First number to swap:
+ *      double *A;
+ *  - Second number to swap:
+ *      double *B 
+ * RETURNS:
+ *   None;
+ */
+void Swap2d( double *A, double *B )
+{
+  double tmp = *A;
+
+  *A = *B;
+  *B = tmp;
+}/* End of 'Swap' function */
+
 /* Load matrix function
  * ARGUMENTS:
  *  - :
@@ -175,6 +192,7 @@ void Go3( int Pos )
   Parity = SaveParity;
 }/* End of 'Go3' function */
 
+/* Eval of permutation determinant function */
 double EvalDeterminant( char *FileName )
 {
   int i;
@@ -189,7 +207,46 @@ double EvalDeterminant( char *FileName )
   }
   Go3(0);
   return Sum;
-}
+}/* End of 'EvalDeterminant' function */
+
+/* Eval without permutation determinant function */
+double EvalDeterminant2( char *FileName )
+{
+  int i, j, k, m, sign = 1;
+  double x, Det;
+
+  if (LoadMatrix(FileName) == 0)
+    return -0;
+  printf("\n");
+
+  for (i = 0; i < N; i++)
+    for (j = i + 1; j < N; j++)
+    {
+      if (A[i][i] == 0)
+      {
+        for (k = i + 1; k < N; k++)
+          if (A[k][i] != 0)
+            break;
+        if (k == N)
+          return 0;
+        for (m = 0; m < N; m++)
+          Swap2d(&A[k][m], &A[i][m]);
+        sign *= -1;
+      }
+      x = A[i][j] / A[i][i];
+      for (k = 0; k < N; k++)
+        A[k][j] -= x * A[k][i];
+    }
+
+  for (i = 0; i < N; i++, printf("\n"))
+    for (j = 0; j < N; j++)
+      printf("%8.6lf ", A[i][j]);
+
+  for (i = 0, Det = 1; i < N; i++)
+    Det *= A[i][i];
+  return sign * Det;
+}/* End of 'EvalDeterminant2' function */
+
 
 /* Main program function 
  * ARGUMENTS:
@@ -207,12 +264,14 @@ void main( void )
   FILE *F;
 
   k = sizeof(M) / sizeof(M[0]);
-  if ((F = fopen("ds1_answers2.txt", "w")) == NULL)
+  if ((F = fopen("ds1_answers.txt", "w")) == NULL)
     return;
   for (i = 0; i < k; i++)
   {
     printf("File: %s, Determinant: %lf\n\n", M[i], d = EvalDeterminant(M[i]));
-    fprintf(F, "File: %10s, Determinant: %20.6lf\n", M[i], d);
+    fprintf(F, "File: %10s, Determinant1: %20.6lf\n", M[i], d);
+    printf("File: %s, Determinant: %lf\n\n", M[i], d = EvalDeterminant2(M[i]));
+    fprintf(F, "File: %10s, Determinant2: %20.6lf\n\n", M[i], d);
   }
   i = 0;
   fclose(F);
