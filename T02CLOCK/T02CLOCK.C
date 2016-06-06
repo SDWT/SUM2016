@@ -13,6 +13,7 @@
 /* My window class */
 #define MY_WND_CLASS "My Window Class"
 #define DS1_PI 3.14159265358979323846
+
 /* Forward reference */
 LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
                             WPARAM wParam, LPARAM lParam );
@@ -148,7 +149,6 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   static CHAR Str[50], StrBuf[50], StrDays[][50] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
   static INT w = 1600, h = 800, r = 15;
   static DOUBLE len, mn = 0, mx = 0, x = 0, y = 0;
-  static BOOL IsEyes = 1;
   static BITMAP Bm, bmS;
   static HBITMAP hBm, hBmAND, hBmXOR, hBmLogo;
   static HDC hMemDC, hMemDCAND, hMemDCXOR, hMemDCLogo;
@@ -169,9 +169,8 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
     cs = (CHAR *)lParam;
-    /*
-    hBmLogo = LoadImage(NULL, "C.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    */
+
+    /*hBmLogo = LoadImage(NULL, "C.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
     hBmLogo = LoadImage(cs->hInstance, (CHAR *)IDB_CLOCKFACE, IMAGE_BITMAP, 0, 0, 0);
     hMemDCLogo = CreateCompatibleDC(hDC);
     SelectObject(hMemDCLogo, hBmLogo);
@@ -193,7 +192,6 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     FlipFullScreen(hWnd);
     return 0;
   case WM_COMMAND:
-    IsEyes = !IsEyes;
     /*InvalidateRect(hWnd, NULL, FALSE);*/
     return 0;
   case WM_ERASEBKGND:

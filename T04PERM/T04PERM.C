@@ -1,7 +1,7 @@
-/* FILENAME: T03POLE.C
+/* FILENAME: T04PERM.C
  * PROGRAMMER: DS1
- * DATE: 03.06.2016
- * PURPOSE: Magnetic pole to cursor
+ * DATE: 04.06.2016
+ * PURPOSE: 
  */
 
 #include <stdlib.h>
@@ -13,6 +13,15 @@
 int Parity = 0, P[N], PIs[N];
 FILE *F;
 
+/* Swap to int numbers function 
+ * ARGUMENTS:
+ *  - First number to swap:
+ *      int *A;
+ *  - Second number to swap:
+ *      int *B 
+ * RETURNS:
+ *   None;
+ */
 void Swap( int *A, int *B )
 {
   int tmp = *A;
@@ -21,7 +30,12 @@ void Swap( int *A, int *B )
   *B = tmp;
 }/* End of 'Swap' function */
 
-
+/* Write perseption to file function 
+ * ARGUMENTS:
+ *  - None;
+ * RETURNS:
+ *   None;
+ */
 void PermToFile( void )
 {
   int i;
@@ -37,7 +51,13 @@ void PermToFile( void )
 }/* End of 'PermToFile' function */
 
 
-/* Rec func perm */
+/* Rec func perm 
+ * ARGUMENTS:
+ *  - Position in perseption:
+ *      int Pos;
+ * RETURNS:
+ *   None;
+ */
 void Go( int Pos )
 {
   int i, j;
@@ -57,7 +77,13 @@ void Go( int Pos )
 
 }/* End of 'Go' function */
 
-/* Rec func perm */
+/* Rec func perm 
+ * ARGUMENTS:
+ *  - Position in perseption:
+ *      int Pos;
+ * RETURNS:
+ *   None;
+ */
 void Go2( int Pos )
 {
   int i, j;
@@ -89,12 +115,15 @@ void Go2( int Pos )
 }/* End of 'Go' function */
 
 
-/* Main program function */
+/* Main program function 
+ * ARGUMENTS:
+ *  - None;
+ * RETURNS:
+ *   None;
+ */
 void main( void )
 {
   int i;
-  char Str1[100], Str2[100];
-  FILE *F2;
   if ((F = fopen("perm.log", "w")) == NULL)
     return;
 
@@ -105,19 +134,6 @@ void main( void )
   }
   Go2(0);
   fclose(F);
-  /*
-  if ((F = fopen("perm2.log", "w")) == NULL)
-    return;
-  for (i = 0; i < N; i++)
-  {
-    P[i] = i + 1;
-    PIs[i] = 0;
-  }
-  Go(0);
-  fclose(F);
-  */
-
 }/* End of 'main' function */
 
-
-/* END OF 'T01EYES.C' FILE */
+/* END OF 'T04PERM.C' FILE */
