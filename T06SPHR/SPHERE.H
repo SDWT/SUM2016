@@ -13,11 +13,12 @@ typedef DOUBLE DBL;
 typedef FLOAT FLT;
 
 /* Space vector representation */
+/*
 typedef struct tagVEC
 {
   DBL X, Y, Z;
 } VEC;
-
+*/
 
 
 VOID SphereDrawEllipse( HDC hDC, INT Xc, INT Yc, INT R );

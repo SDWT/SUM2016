@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "resource.h"
 #include "sphere.h"
+#include "vec.h"
 
 #define DS1_PI 3.14159265358979323846
 #define M 30
@@ -90,10 +90,7 @@ VOID SphereDrawLines( HDC hDC, INT Xc, INT Yc, INT R )
       x = R * sin(theta) * cos(phi);
       z = R * sin(theta) * sin(phi);
       y = R * cos(theta);
-      if (j == 0)
-        MoveToEx(hDC, (INT)(x + Xc), (INT)(y + Yc), NULL);
-      else
-        LineTo(hDC, (INT)(x + Xc), (INT)(y + Yc));
+      LineTo(hDC, (INT)(x + Xc), (INT)(y + Yc));
     }
   }
   for (j = 0; j < M; j++)
@@ -107,10 +104,7 @@ VOID SphereDrawLines( HDC hDC, INT Xc, INT Yc, INT R )
       x = R * sin(theta) * cos(phi);
       z = R * sin(theta) * sin(phi);
       y = R * cos(theta);
-      if (i == 0)
-        MoveToEx(hDC, (INT)(x + Xc), (INT)(y + Yc), NULL);
-      else
-        LineTo(hDC, (INT)(x + Xc), (INT)(y + Yc));
+      LineTo(hDC, (INT)(x + Xc), (INT)(y + Yc));
     }
   }
   SelectObject(hDC, hPen);

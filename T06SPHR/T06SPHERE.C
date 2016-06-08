@@ -149,7 +149,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
   CREATESTRUCT *cs;
   MINMAXINFO *MinMax;
   static INT n = 2, fl = 1;
-  static INT w = 1600, h = 800, r = 15;
+  static INT w = 800, h = 400, r = 15;
   static DOUBLE len, mn = 0, mx = 0, x = 0, y = 0;
   static BOOL IsEyes = 1;
   static BITMAP Bm;
