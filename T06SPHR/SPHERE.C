@@ -7,12 +7,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 #include "sphere.h"
 #include "vec.h"
 
 #define DS1_PI 3.14159265358979323846
-#define M 30
+#define M 400
 #define N (M / 2)
 
 VEC Sphere[N][M];
@@ -196,6 +197,37 @@ VOID SphereDrawPolygon( HDC hDC, INT Xc, INT Yc, INT R )
   C = NormalTransform(C, MatrixIdentity());
   */
 
+/* Draw quadrilateral function.
+ * ARGUMENTS:
+ *   - drawing device context:
+ *       HDC hDC;
+ *   - corner points:
+ *       POINT P0, P1, P2, P3;
+ *   - color:
+ *       DWORD Color;
+ * RETURNS: None.
+ */
+VOID DrawQuad( HDC hDC, POINT P0, POINT P1, POINT P2, POINT P3 )
+{
+  INT s =
+    (P0.x - P1.x) * (P0.y + P1.y) +
+    (P1.x - P2.x) * (P1.y + P2.y) +
+    (P2.x - P3.x) * (P2.y + P3.y) +
+    (P3.x - P0.x) * (P3.y + P0.y);
+
+  if (s > 0)
+  {
+    POINT pts[4];
+    
+    pts[0] = P0;
+    pts[1] = P1;
+    pts[2] = P2;
+    pts[3] = P3;
+
+    Polygon(hDC, pts, 4);
+  }
+} /* End of 'DrawQuad' function */
+
 /* Load sphere texture function.
  * ARGUMENTS: None.
  * RETURNS: None.
@@ -239,17 +271,133 @@ VOID LoadSphere( VOID )
   ReleaseDC(NULL, hDC);
 } /* End of 'LoadSphere' function */
 
-/*
-. . .
-      INT img_x, img_y;
-      COLORREF c;
+/* Vector normalization function.
+ * ARGUMENTS:
+ *   - vector to be normalize:
+ *       VEC V;
+ * RETURNS:
+ *   (VEC) normalized vector value.
+ */
+VEC VecNormalize( VEC V )
+{
+  DBL len = VecDotVec(V, V);
 
-. . .
+  if (len != 1 && len != 0)
+    len = sqrt(len), V.X /= len, V.Y /= len, V.Z /= len;
+  return V;
+} /* End of 'VecNormalize' function */
+
+/* Rotate vector function.
+ * ARGUMENTS:
+ *   - vector to be rotated:
+ *       VEC P;
+ *   - vector rotated around:
+ *       VEC A;
+ *   - rotation angle in degree:
+ *       DBL Angle;
+ * RETURNS:
+ *   (VEC) rotated vector value.
+ */
+VEC Rotate( VEC P, VEC A, DBL Angle )
+{
+  DBL si, co;
+
+  A = VecNormalize(A);
+
+  Angle *= DS1_PI / 180;
+  si = sin(Angle);
+  co = cos(Angle);
+
+  return VecSet(P.X * (co + A.X * A.X * (1 - co)) +
+                P.Y * (A.Y * A.X * (1 - co) + A.Z * si) +
+                P.Z * (A.Z * A.X * (1 - co) - A.Y * si),
+                P.X * (A.X * A.Y * (1 - co) - A.Z * si) +
+                P.Y * (co + A.Y * A.Y * (1 - co)) + 
+                P.Z * (A.Z * A.Y * (1 - co) + A.X * si),
+                P.X * (A.X * A.Z * (1 - co) + A.Y * si) +
+                P.Y * (A.Y * A.Z * (1 - co) - A.X * si) + 
+                P.Z * (co + A.Z * A.Z * (1 - co)));
+} /* End of 'Rotate' function */
+
+/* Sphere draw function 
+ * ARGUMENTS:
+ *  -  Handle DC:
+ *       HDC hDC;
+ *  -  X center coordinate:
+ *       INT Xc;
+ *  -  Y center coordinate:
+ *       INT Yc;
+ * RETURNS:
+ * None.
+ */
+VOID SphereDraw( HDC hDC, INT xc, INT yc )
+{
+  DOUBLE phi, theta, phaze = clock() / 1000.0;
+  INT i, j, r1 = 500;
+  SYSTEMTIME Time;
+  static VEC V[N][M];
+  static POINT Ps[N][M], p0, p1, p2, p3;
+  INT img_x, img_y;
+  COLORREF c;
+  BYTE r,g,b;
+  
+
+  GetLocalTime(&Time);
+  for (i = 0; i < N; i++)
+  {
+    theta = i * DS1_PI / (N - 1);
+    for (j = 0; j < M; j++)
+    { 
+
+      phi = j * 2.0 * DS1_PI / (M - 1) + phaze;
+      V[i][j].X = r1 * sin(theta) * cos(phi);
+      V[i][j].Y = r1 * sin(theta) * sin(phi);
+      V[i][j].Z = r1 * cos(theta);
+      V[i][j] = Rotate(V[i][j], VecSet(1, 1, 1), 30);
+      Ps[i][j].x = xc + (INT)V[i][j].X;
+      Ps[i][j].y = yc + (INT)V[i][j].Z;
+      //SetPixelV(hDC, V[i][j].X + xc, V[i][j].Z + yc, RGB(b, g, r));
+    }
+  }
+
+  for (j = 0; j < M - 1; j++)
+  { 
+    for (i = 1; i < N - 1; i++)
+    { 
       img_x = j * (Globe.W - 1) / (M - 1);
       img_y = i * (Globe.H - 1) / (N - 1);
       c = Globe.Bits[img_x + img_y * Globe.W]; /* GetPixel(Globe.hDC, img_x, img_y); */
-/*
-      SetPixelV(hDC, x, y, c);
-*/
+      r = GetRValue(c);
+      g = GetGValue(c);
+      b = GetBValue(c);
+      c = RGB(b, g, r);
+      p0 = Ps[i][j];
+      p1 = Ps[i][j + 1];
+      p2 = Ps[i + 1][j + 1];
+      p3 = Ps[i + 1][j];
+      SelectObject(hDC, GetStockObject(DC_PEN));
+      SelectObject(hDC, GetStockObject(DC_BRUSH));
+      SetDCPenColor(hDC, c);
+      SetDCBrushColor(hDC, c);
+      DrawQuad(hDC, p0, p1, p2, p3);
+    }
+  } 
+  /*for (i = 0; i < N; i++)
+  { 
+    MoveToEx(hDC, xc + V[i][0].X, yc - V[i][0].Z, NULL);
+    for (j = 1; j < M; j++)
+    {       
+      LineTo(hDC, xc + V[i][j].X, yc - V[i][j].Z);
+    }
+  } 
+  for (j = 0; j < M; j++)
+  { 
+    MoveToEx(hDC, xc + V[0][j].X, yc - V[0][j].Z, NULL);
+    for (i = 1; i < N; i++)
+    {       
+      LineTo(hDC, xc + V[i][j].X, yc - V[i][j].Z);
+    }
+  }*/
+}
 
 /* END OF 'SPHERE.C' FILE */

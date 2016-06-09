@@ -200,6 +200,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     hDC = GetDC(hWnd);
     hBm = CreateCompatibleBitmap(hDC, w, h);
     ReleaseDC(hWnd, hDC);
+    LoadSphere();
     SelectObject(hMemDC, hBm);
     SendMessage(hWnd, WM_TIMER, 0, 0);
     break;
@@ -241,7 +242,8 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
 
     GetLocalTime(&ST);
 
-    SphereDrawLines(hMemDC, w / 2, h / 2, 150);
+    /*SphereDrawLines(hMemDC, w / 2, h / 2, 150);*/
+    SphereDraw(hMemDC, w / 2, h / 2);
     /*SphereDrawEllipse(hMemDC, w / 2, h / 2, 100);*/
 
     /* Write date and time on display */
