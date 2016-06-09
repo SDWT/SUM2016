@@ -171,7 +171,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
 
-    cs = (CHAR *)lParam;
+    cs = (CREATESTRUCT *)lParam;
     /*hBmAND = LoadImage(NULL, "SDAND.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
     hBmAND = LoadImage(cs->hInstance, (CHAR *)IDB_AND, IMAGE_BITMAP, 0, 0, 0);
     hMemDCAND = CreateCompatibleDC(hDC);
