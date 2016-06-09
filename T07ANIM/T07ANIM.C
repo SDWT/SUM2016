@@ -38,6 +38,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   MSG msg;
   HWND hWnd;
 
+
   /* Create window class */
   wc.style = CS_HREDRAW | CS_VREDRAW;
   wc.cbClsExtra = 0;
@@ -72,6 +73,8 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   ShowWindow(hWnd, SW_SHOWNORMAL);
   /* Update window */
   UpdateWindow(hWnd);
+
+
 
   /* Run message loop */
   while (GetMessage(&msg, NULL, 0, 0))
@@ -170,7 +173,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
 
-    cs = (CHAR *)lParam;
+    cs = (CREATESTRUCT *)lParam;
     /*hBmAND = LoadImage(NULL, "SDAND.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
     hBmAND = LoadImage(cs->hInstance, (CHAR *)IDB_AND, IMAGE_BITMAP, 0, 0, 0);
     hMemDCAND = CreateCompatibleDC(hDC);
