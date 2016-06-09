@@ -28,11 +28,3 @@ obj/
 _ReSharper*/
 [Tt]est[Rr]esult*
 /VSMacros80/
-*.htm
-*.filters
-*.vcxproj
-*.opendb
-*.db
-*.sln
-*.sdf
-*.vcproj
