@@ -89,18 +89,24 @@ VOID DS1_AnimCopyFrame( HDC hDC )
 VOID DS1_AnimRender( VOID )
 {
   int i;
+  HPEN hPen;
+  HBRUSH hBr;
 
   /*. . . опросили все (kbd, mouse, joystick)*/
   for (i = 0; i < DS1_Anim.NumOfUnits; i++)
     DS1_Anim.Units[i]->Response(DS1_Anim.Units[i], &DS1_Anim);
 
   /* Clean frame */
-  SetDCPenColor(DS1_Anim.hDC, RGB(0, 0, 0));
-  SetDCBrushColor(DS1_Anim.hDC, RGB(0, 0, 0));
+  hPen = SelectObject(DS1_Anim.hDC, GetStockObject(DC_PEN));
+  hBr = SelectObject(DS1_Anim.hDC, GetStockObject(DC_BRUSH));
+  SetDCPenColor(DS1_Anim.hDC, RGB(0, 155, 0));
+  SetDCBrushColor(DS1_Anim.hDC, RGB(0, 155, 0));
   Rectangle(DS1_Anim.hDC, 0, 0, DS1_Anim.W, DS1_Anim.H);
   SetDCPenColor(DS1_Anim.hDC, RGB(0, 0, 0));
   SetDCBrushColor(DS1_Anim.hDC, RGB(255, 255, 255));
-
+  SelectObject(DS1_Anim.hDC, hPen);
+  SelectObject(DS1_Anim.hDC, hBr);
+  
   for (i = 0; i < DS1_Anim.NumOfUnits; i++)
   {
     /*. . . можно сбросить все кисти и перья*/
