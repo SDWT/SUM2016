@@ -1,8 +1,8 @@
 /* FILENAME: VEC.H
-* PROGRAMMER: DS1
-* DATE: 07.06.2016
-* PURPOSE: Vector module
-*/
+ * PROGRAMMER: DS1
+ * DATE: 07.06.2016
+ * PURPOSE: Vector module
+ */
 
 #ifndef __VEC_H_
 #define __VEC_H_
@@ -11,10 +11,6 @@
 
 /* PI constant */
 #define PI 3.14159265358979323846
-
-/* Base float-point types */
-typedef DOUBLE DBL;
-typedef FLOAT FLT;
 
 /* Space vector point representation type */
 typedef struct tagVEC

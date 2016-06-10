@@ -168,7 +168,7 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
     SetTimer(hWnd, 30, 10, NULL);
     hDC = GetDC(hWnd);
     hMemDC = CreateCompatibleDC(hDC);
-    cs = (CHAR *)lParam;
+    cs = (CREATESTRUCT *)lParam;
 
     /*hBmLogo = LoadImage(NULL, "C.BMP", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
     hBmLogo = LoadImage(cs->hInstance, (CHAR *)IDB_CLOCKFACE, IMAGE_BITMAP, 0, 0, 0);
