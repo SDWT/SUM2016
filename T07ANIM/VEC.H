@@ -9,8 +9,12 @@
 
 #include <math.h>
 
+/* Base float-point types */
+typedef FLOAT FLT;
+typedef DOUBLE DBL;
+
 /* PI constant */
-#define PI 3.14159265358979323846
+#define DS1_PI 3.14159265358979323846
 
 /* Space vector point representation type */
 typedef struct tagVEC
@@ -249,7 +253,7 @@ __inline MATR MatrixRotateX( DBL AngleInDegree )
   MATR m = MatrixIdentity();
   DBL CosA, SinA, MultiplierD2R;
 
-  MultiplierD2R = (AngleInDegree * PI  / 180);
+  MultiplierD2R = (AngleInDegree * DS1_PI  / 180);
   __asm 
   {
     fld AngleInDegree
@@ -277,7 +281,7 @@ __inline MATR MatrixRotateY( DBL AngleInDegree )
   MATR m = MatrixIdentity();
   DBL CosA, SinA, MultiplierD2R;
 
-  MultiplierD2R = (AngleInDegree * PI  / 180);
+  MultiplierD2R = (AngleInDegree * DS1_PI  / 180);
   __asm 
   {
     fld AngleInDegree
@@ -305,7 +309,7 @@ __inline MATR MatrixRotateZ( DBL AngleInDegree )
   MATR m = MatrixIdentity();
   DBL CosA, SinA, MultiplierD2R;
 
-  MultiplierD2R = (AngleInDegree * PI  / 180);
+  MultiplierD2R = (AngleInDegree * DS1_PI  / 180);
   __asm 
   {
     fld AngleInDegree
@@ -335,7 +339,7 @@ __inline MATR MatrixRotate( DBL AngleInDegree, DBL x, DBL y, DBL z )
   MATR m = MatrixIdentity();
   DBL X, Y, Z, CosA, SinA, MultiplierD2R;
 
-  MultiplierD2R = (AngleInDegree * PI  / 180);
+  MultiplierD2R = (AngleInDegree * DS1_PI  / 180);
   __asm 
   {
     fld AngleInDegree

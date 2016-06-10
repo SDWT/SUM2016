@@ -23,10 +23,6 @@
 
 #include <stdlib.h>
 
-/* Base float-point types */
-typedef FLOAT FLT;
-typedef DOUBLE DBL;
-
 #include "vec.h"
 /*...*/
 

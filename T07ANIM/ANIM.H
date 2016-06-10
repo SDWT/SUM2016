@@ -9,7 +9,7 @@
 
 #include "def.h"
 
-#define MAX_UNITS 100
+#define DS1_MAX_UNITS 100
 
 /* Forward reference to unit type*/
 typedef struct tagds1UNIT ds1UNIT;
@@ -21,7 +21,7 @@ typedef struct
   HDC hDC;   /* context in memory */
   INT W, H;  /* window size */
   HBITMAP hFrame; /* picture frame */
-  ds1UNIT *Units[MAX_UNITS]; /* animation object array */
+  ds1UNIT *Units[DS1_MAX_UNITS]; /* animation object array */
   INT NumOfUnits; /* is now number animation object */
   /*. . .*/
 } ds1ANIM;
@@ -66,7 +66,10 @@ struct tagds1UNIT
   VOID (* Render)(ds1UNIT *Uni, ds1ANIM *Ani);
 };
 
-/* Prototypes animation function */
+/*** 
+ * Animation system support 
+ ***/
+extern ds1ANIM DS1_Anim;
 /* Animation initialization function.
  * ARGUMENTS:
  *   - window:
@@ -104,7 +107,7 @@ VOID DS1_AnimRender( VOID );
  *       ds1ANIM *Ani;
  * RETURNS: None.
  */
-VOID DS1_AnimAddUnit( ds1ANIM *Ani );
+VOID DS1_AnimAddUnit( ds1UNIT *Uni );
 /* Unit creation function.
  * ARGUMENTS:
  *   - unit structure size in bytes:
@@ -113,6 +116,9 @@ VOID DS1_AnimAddUnit( ds1ANIM *Ani );
  *   (ds1UNIT *) pointer to created unit.
  */
 ds1UNIT * DS1_AnimUnitCreate( INT Size );
+
+/* Unit samples */
+ds1UNIT * DS1_UnitCreateGlobe( INT X, INT Y, INT R );
 
 
 #endif /* __ANIM_H_ */

@@ -75,7 +75,9 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   /* Update window */
   UpdateWindow(hWnd);
 
-
+  /*** Add unit samples ***/
+  DS1_AnimAddUnit(DS1_UnitCreateGlobe(1600 / 4, 800 / 2, (2400) / 10));
+  DS1_AnimAddUnit(DS1_UnitCreateGlobe(3 * 1600 / 4, 800 / 2, (2400) / 10));
 
   /* Run message loop */
   while (GetMessage(&msg, NULL, 0, 0))

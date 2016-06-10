@@ -205,6 +205,10 @@
 			<Filter
 				Name="Unit samples"
 				>
+				<File
+					RelativePath=".\SPHERE.C"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Math support"
