@@ -119,7 +119,7 @@ ds1UNIT * DS1_AnimUnitCreate( INT Size );
 
 /* Unit samples */
 ds1UNIT * DS1_UnitCreateGlobe( INT X, INT Y, INT R );
-
+VOID LoadSphere( VOID );
 
 #endif /* __ANIM_H_ */
 

@@ -200,7 +200,7 @@ static VOID DrawQuad( HDC hDC, POINT P0, POINT P1, POINT P2, POINT P3 )
  * ARGUMENTS: None.
  * RETURNS: None.
  */
-static VOID LoadSphere( VOID )
+VOID LoadSphere( VOID )
 {
   HDC hDC = GetDC(NULL), hMemDC, hMemDC1;
   HBITMAP hBm;
@@ -330,7 +330,7 @@ static VOID SphereDraw( HDC hDC, INT xc, INT yc, INT R1 )
 
   for (j = 0; j < M - 1; j++)
   { 
-    for (i = 1; i < N - 1; i++)
+    for (i = 0; i < N - 1; i++)
     { 
       img_x = j * (Globe.W - 1) / (M - 1);
       img_y = i * (Globe.H - 1) / (N - 1);
@@ -378,8 +378,6 @@ static VOID SphereDraw( HDC hDC, INT xc, INT yc, INT R1 )
  */
 static VOID DS1_UnitInit( ds1UNIT_GLOBE *Uni, ds1ANIM *Ani )
 {
-  LoadSphere();
-
 } /* End of 'VG4_UnitInit' function */
 
 /* Unit deinitialization function.
