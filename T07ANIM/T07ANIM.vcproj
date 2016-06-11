@@ -210,6 +210,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\SPRITE.C"
+					>
+				</File>
+				<File
 					RelativePath=".\UNITS.H"
 					>
 				</File>

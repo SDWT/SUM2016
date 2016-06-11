@@ -13,6 +13,13 @@
 ds1UNIT * DS1_UnitCreateGlobe( INT X, INT Y, INT R );
 VOID LoadSphere( VOID );
 
+/* Unit ball creation function.
+ * ARGUMENTS: None.
+ * RETURNS:
+ *   (ds1UNIT *) pointer to created unit.
+ */
+ds1UNIT * DS1_UnitCreateSprite( INT X, INT Y, CHAR *FileAnd, CHAR *FileXor );
+
 #endif /* __UNITS_H_ */
 
 /* END OF 'UNITS.H' FILE */

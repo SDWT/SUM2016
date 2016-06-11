@@ -26,6 +26,9 @@ static UINT64
 /* Global mouse wheel delta value */
 INT DS1_MouseWheel = 0;
 
+/* Global system info on display */
+BOOL DS1_IsSysInfo = 0;
+
 /* Global animation context */
 ds1ANIM DS1_Anim;
 
@@ -234,23 +237,22 @@ VOID DS1_AnimRender( VOID )
     DS1_Anim.Units[i]->Render(DS1_Anim.Units[i], &DS1_Anim);
   }
 
-  SetBkMode(DS1_Anim.hDC, TRANSPARENT);
-  TextOut(DS1_Anim.hDC, 0, 0, StrBuf, sprintf(StrBuf, "Input info:"
-    "Mx: %5d; Mdx: %5d;"
-    "My: %5d; Mdy: %5d;"
-    "Mz: %5d; Mdz: %5d;"
-    "Jx: %5lf;"
-    "Jy: %5lf;"
-    "Jz: %5lf;"
-    "Jr: %5lf;"
-    "ESCAPE: %2d.", DS1_Anim.Mx, DS1_Anim.Mdx, DS1_Anim.My, DS1_Anim.Mdy, DS1_Anim.Mz, DS1_Anim.Mdz,
-    DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ, DS1_Anim.JR, DS1_Anim.Keys[VK_ESCAPE]));
-  SetBkMode(DS1_Anim.hDC, OPAQUE);
-
+  if (DS1_IsSysInfo)
+  {
+    SetBkMode(DS1_Anim.hDC, TRANSPARENT);
+    TextOut(DS1_Anim.hDC, 0, 0, StrBuf, sprintf(StrBuf, "Input info: "
+      "Mx: %6d; Mdx: %6d; My: %6d; Mdy: %6d; Mz: %6d; Mdz: %6d; "
+      "Jx: %5.3lf; Jy: %5.3lf; Jz: %5.3lf; Jr: %5.3lf; JPov: %2d.", 
+      DS1_Anim.Mx, DS1_Anim.Mdx, DS1_Anim.My, DS1_Anim.Mdy, DS1_Anim.Mz, DS1_Anim.Mdz,
+      DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ, DS1_Anim.JR, DS1_Anim.JPov));
+    SetBkMode(DS1_Anim.hDC, OPAQUE);
+  }
   if (DS1_Anim.Keys[VK_MENU] && DS1_Anim.KeysClick[VK_RETURN])
     DS1_FlipFullScreen();
   if (DS1_Anim.KeysClick[VK_ESCAPE])
     PostMessage(DS1_Anim.hWnd, WM_CLOSE, 0, 0);
+  if (DS1_Anim.KeysClick[VK_F2])
+    DS1_IsSysInfo = !DS1_IsSysInfo;
 
   /*. . .*/
 } /* End of 'DS1_ANIMRender' function */

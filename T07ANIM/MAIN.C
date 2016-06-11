@@ -79,7 +79,8 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   /*** Add unit samples ***/
   LoadSphere();
   DS1_AnimAddUnit(DS1_UnitCreateGlobe(1600 / 4, 800 / 2, (2400) / 10));
-  DS1_AnimAddUnit(DS1_UnitCreateGlobe(3 * 1600 / 4, 800 / 2, (2400) / 10));
+  /*DS1_AnimAddUnit(DS1_UnitCreateGlobe(3 * 1600 / 4, 800 / 2, (2400) / 10));*/
+  DS1_AnimAddUnit(DS1_UnitCreateSprite(-70, -80, "SDAND.BMP", "SDXOR.BMP"));
 
   /* Run message loop */
   while (GetMessage(&msg, NULL, 0, 0))
