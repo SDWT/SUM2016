@@ -28,6 +28,17 @@ typedef struct
       Time, DeltaTime,             /* Time with pause and interframe interval */
       FPS;                         /* Frames per seond value */
   BOOL IsPause;                    /* Pause flag */
+  /* Input system */
+  INT Mx, My,                      /* Mouse cursor position */
+      Mz,                          /* Mouse wheel absolute value */
+      Mdx, Mdy, Mdz;               /* Delta values of mouse axes */
+  BYTE Keys[256],                  /* Current key state */
+       KeysOld[256],               /* Previous frame key state */
+       KeysClick[256],             /* Click key flags */
+       JBut[32];                   /* Joystick button state */
+  INT JPov;                      /* Joystick point-of-view control [0,1..8] */
+  DBL JX, JY, JZ, JR;              /* Joystick axes */
+
 } ds1ANIM;
 
 struct tagds1UNIT
@@ -74,6 +85,10 @@ struct tagds1UNIT
  * Animation system support 
  ***/
 extern ds1ANIM DS1_Anim;
+
+/* Global mouse wheel delta value */
+extern INT DS1_MouseWheel;
+
 /* Animation initialization function.
  * ARGUMENTS:
  *   - window:
@@ -120,6 +135,9 @@ VOID DS1_AnimAddUnit( ds1UNIT *Uni );
  *   (ds1UNIT *) pointer to created unit.
  */
 ds1UNIT * DS1_AnimUnitCreate( INT Size );
+
+/* Set/reset full screen mode function */
+VOID DS1_FlipFullScreen( VOID );
 
 #endif /* __ANIM_H_ */
 
