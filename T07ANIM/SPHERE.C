@@ -298,16 +298,17 @@ static VEC Rotate( VEC P, VEC A, DBL Angle )
  * RETURNS:
  * None.
  */
-static VOID SphereDraw( HDC hDC, INT xc, INT yc, INT R1 )
+static VOID SphereDraw( ds1ANIM *Ani, INT xc, INT yc, INT R1 )
 {
-  DOUBLE phi, theta, phaze = clock() / 1000.0;
+  DOUBLE phi, theta, phaze = Ani->Time;
   INT i, j, r1 = R1;
-  SYSTEMTIME Time;
+  INT img_x, img_y;
   static VEC V[N][M];
   static POINT Ps[N][M], p0, p1, p2, p3;
-  INT img_x, img_y;
+  SYSTEMTIME Time;
   COLORREF c;
   BYTE r,g,b;
+  HDC hDC = Ani->hDC;
   
 
   GetLocalTime(&Time);
@@ -403,7 +404,7 @@ static VOID DS1_UnitClose( ds1UNIT_GLOBE *Uni, ds1ANIM *Ani )
  */
 static VOID DS1_UnitRender( ds1UNIT_GLOBE *Uni, ds1ANIM *Ani )
 {
-  SphereDraw(Ani->hDC, Uni->X, Ani->H / 2, Uni->R); 
+  SphereDraw(Ani, Uni->X, Ani->H / 2, Uni->R); 
   /*SphereDrawLines(Ani->hDC, Ani->W / 2, Ani->H / 2, 100);*/
 } /* End of 'DS1_UnitRender' function */
 

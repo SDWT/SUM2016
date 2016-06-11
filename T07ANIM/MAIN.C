@@ -10,6 +10,7 @@
 #include <windows.h>
 
 #include "anim.h"
+#include "units.h"
 
 /* My window class */
 #define DS1_MY_WND_CLASS "My Window Class"

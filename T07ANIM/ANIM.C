@@ -4,7 +4,18 @@
  * PURPOSE: Animation system
  */
 
+#include <stdio.h>
+
 #include "anim.h"
+
+/* Timer local data */
+static UINT64
+  DS1_StartTime,    /* Start program time */
+  DS1_OldTime,      /* Time from program start to previous frame */
+  DS1_OldTimeFPS,   /* Old time FPS measurement */
+  DS1_PauseTime,    /* Time during pause period */
+  DS1_TimePerSec,   /* Timer resolution */
+  DS1_FrameCounter; /* Frames counter */
 
 /* Global animation context */
 ds1ANIM DS1_Anim;
@@ -17,6 +28,7 @@ ds1ANIM DS1_Anim;
  */
 VOID DS1_AnimInit( HWND hWnd )
 {
+  LARGE_INTEGER t;
   HDC hDC;
 
   memset(&DS1_Anim, 0, sizeof(ds1ANIM));
@@ -26,6 +38,14 @@ VOID DS1_AnimInit( HWND hWnd )
 
   ReleaseDC(hWnd, hDC);
   DS1_Anim.NumOfUnits = 0;
+
+  /* Timer initialization */
+  QueryPerformanceFrequency(&t);
+  DS1_TimePerSec = t.QuadPart;
+  QueryPerformanceCounter(&t);
+  DS1_StartTime = DS1_OldTime = DS1_OldTimeFPS = t.QuadPart;
+  DS1_PauseTime = 0;
+
 
 } /* End of 'DS1_ANIMInit' function */
 
@@ -91,10 +111,41 @@ VOID DS1_AnimCopyFrame( HDC hDC )
 VOID DS1_AnimRender( VOID )
 {
   int i;
+  LARGE_INTEGER t;
   HPEN hPen;
   HBRUSH hBr;
 
   /*** Obtain input system state ***/
+
+  /*** Handle timer ***/
+  DS1_FrameCounter++;
+  QueryPerformanceCounter(&t);
+  /* Global time */
+  DS1_Anim.GlobalTime = (DBL)(t.QuadPart - DS1_StartTime) / DS1_TimePerSec;
+  DS1_Anim.GlobalDeltaTime = (DBL)(t.QuadPart - DS1_OldTime) / DS1_TimePerSec;
+  /* Time with pause */
+  if (DS1_Anim.IsPause)
+  {
+    DS1_Anim.DeltaTime = 0;
+    DS1_PauseTime += t.QuadPart - DS1_OldTime;
+  }
+  else
+  {
+    DS1_Anim.Time = (DBL)(t.QuadPart - DS1_StartTime - DS1_PauseTime) / DS1_TimePerSec;
+    DS1_Anim.DeltaTime = DS1_Anim.GlobalDeltaTime;
+  }
+  /* FPS */
+  if (t.QuadPart - DS1_OldTimeFPS > DS1_TimePerSec)
+  {
+    CHAR str[100];
+
+    DS1_Anim.FPS = DS1_FrameCounter * DS1_TimePerSec / (DBL)(t.QuadPart - DS1_OldTimeFPS);
+    DS1_OldTimeFPS = t.QuadPart;
+    DS1_FrameCounter = 0;
+    sprintf(str, "FPS: %.5f", DS1_Anim.FPS);
+    SetWindowText(DS1_Anim.hWnd, str);
+  }
+  DS1_OldTime = t.QuadPart;
 
   /* Keyboard */
 

@@ -14,16 +14,20 @@
 /* Forward reference to unit type*/
 typedef struct tagds1UNIT ds1UNIT;
 
-/* Animation  */
+/* Animation type */
 typedef struct
 {
-  HWND hWnd; /* window */
-  HDC hDC;   /* context in memory */
-  INT W, H;  /* window size */
-  HBITMAP hFrame; /* picture frame */
-  ds1UNIT *Units[DS1_MAX_UNITS]; /* animation object array */
-  INT NumOfUnits; /* is now number animation object */
-  /*. . .*/
+  HWND hWnd;                       /* window */
+  HDC hDC;                         /* context in memory */
+  INT W, H;                        /* window size */
+  HBITMAP hFrame;                  /* picture frame */
+  ds1UNIT *Units[DS1_MAX_UNITS];   /* animation object array */
+  INT NumOfUnits;                  /* is now number animation object */
+  /* Timer data */
+  DBL GlobalTime, GlobalDeltaTime, /* Global time and interframe interval */
+      Time, DeltaTime,             /* Time with pause and interframe interval */
+      FPS;                         /* Frames per seond value */
+  BOOL IsPause;                    /* Pause flag */
 } ds1ANIM;
 
 struct tagds1UNIT
@@ -116,10 +120,6 @@ VOID DS1_AnimAddUnit( ds1UNIT *Uni );
  *   (ds1UNIT *) pointer to created unit.
  */
 ds1UNIT * DS1_AnimUnitCreate( INT Size );
-
-/* Unit samples */
-ds1UNIT * DS1_UnitCreateGlobe( INT X, INT Y, INT R );
-VOID LoadSphere( VOID );
 
 #endif /* __ANIM_H_ */
 

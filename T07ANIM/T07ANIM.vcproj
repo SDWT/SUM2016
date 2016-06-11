@@ -209,6 +209,10 @@
 					RelativePath=".\SPHERE.C"
 					>
 				</File>
+				<File
+					RelativePath=".\UNITS.H"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Math support"
