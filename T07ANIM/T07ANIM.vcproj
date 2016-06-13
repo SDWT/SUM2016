@@ -198,6 +198,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\RENDER.C"
+					>
+				</File>
+				<File
+					RelativePath=".\RENDER.H"
+					>
+				</File>
+				<File
 					RelativePath=".\UNITS.C"
 					>
 				</File>
@@ -214,6 +222,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\UCUBE.C"
+					>
+				</File>
+				<File
 					RelativePath=".\UNITS.H"
 					>
 				</File>
@@ -222,7 +234,23 @@
 				Name="Math support"
 				>
 				<File
+					RelativePath=".\VEC.C"
+					>
+				</File>
+				<File
 					RelativePath=".\VEC.H"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Image"
+				>
+				<File
+					RelativePath=".\IMAGE.C"
+					>
+				</File>
+				<File
+					RelativePath=".\IMAGE.H"
 					>
 				</File>
 			</Filter>

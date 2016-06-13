@@ -20,6 +20,13 @@ VOID LoadSphere( VOID );
  */
 ds1UNIT * DS1_UnitCreateSprite( INT X, INT Y, CHAR *FileAnd, CHAR *FileXor );
 
+/* Unit cube creation function.
+ * ARGUMENTS: None.
+ * RETURNS:
+ *   (ds1UNIT *) pointer to created unit.
+ */
+ds1UNIT * DS1_UnitCreateCube( VOID );
+
 #endif /* __UNITS_H_ */
 
 /* END OF 'UNITS.H' FILE */

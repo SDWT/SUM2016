@@ -8,6 +8,8 @@
 #define __ANIM_H_
 
 #include "def.h"
+#include "image.h"
+#include "render.h"
 
 #define DS1_MAX_UNITS 100
 

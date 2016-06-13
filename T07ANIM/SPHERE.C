@@ -239,22 +239,6 @@ VOID LoadSphere( VOID )
   ReleaseDC(NULL, hDC);
 } /* End of 'LoadSphere' function */
 
-/* Vector normalization function.
- * ARGUMENTS:
- *   - vector to be normalize:
- *       VEC V;
- * RETURNS:
- *   (VEC) normalized vector value.
- */
-static VEC VecNormalize( VEC V )
-{
-  DBL len = VecDotVec(V, V);
-
-  if (len != 1 && len != 0)
-    len = sqrt(len), V.X /= len, V.Y /= len, V.Z /= len;
-  return V;
-} /* End of 'VecNormalize' function */
-
 /* Rotate vector function.
  * ARGUMENTS:
  *   - vector to be rotated:

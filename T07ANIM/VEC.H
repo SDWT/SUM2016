@@ -7,11 +7,12 @@
 #ifndef __VEC_H_
 #define __VEC_H_
 
+#include <stdlib.h>
 #include <math.h>
 
 /* Base float-point types */
-typedef FLOAT FLT;
-typedef DOUBLE DBL;
+typedef float FLT;
+typedef double DBL;
 
 /* PI constant */
 #define DS1_PI 3.14159265358979323846
@@ -180,6 +181,21 @@ __inline VEC VecNorlize( VEC A )
   return A;
 } /* End of 'VecNorlize' function */
 
+/* Vector normalization function.
+ * ARGUMENTS:
+ *   - vector to be normalize:
+ *       VEC V;
+ * RETURNS:
+ *   (VEC) normalized vector value.
+ */
+__inline VEC VecNormalize( VEC V )
+{
+  DBL len = VecDotVec(V, V);
+
+  if (len != 1 && len != 0)
+    len = sqrt(len), V.X /= len, V.Y /= len, V.Z /= len;
+  return V;
+} /* End of 'VecNormalize' function */
 
  /***
  * Matrix handle function group
@@ -373,10 +389,10 @@ __inline MATR MatrixRotate( DBL AngleInDegree, DBL x, DBL y, DBL z )
  * RETURNS:
  *   (MATR) result matrix.
  */
-__inline MATR MatrMullMatr( MATR M1, MATR M2 )
+__inline MATR MatrMulMatr( MATR M1, MATR M2 )
 {
+  int i, j, k;
   MATR m = MatrixIdentity();
-  INT i, j, k;
 
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
@@ -439,9 +455,9 @@ __inline DBL MatrDeterm( MATR M )
  */
 __inline MATR MatrInverse( MATR M )
 {
-  INT i, j;
+  int i, j;
   MATR r;
-  INT p[4][3] =
+  int p[4][3] =
   {
     {1, 2, 3},
     {0, 2, 3},
@@ -505,7 +521,7 @@ return Vres;
  */
 __inline VEC PointTransform( VEC V, MATR M )
 {
-  INT i, j;
+  int i, j;
   DBL tmp, w = V.X * M.A[0][3] + V.Y * M.A[1][3] + V.Z * M.A[2][3] + M.A[3][3];
   VEC Vres;
 
@@ -537,7 +553,7 @@ return Vres;
  */
 __inline VEC NormalTransform( VEC V, MATR InvM )
 {
-  INT i, j;
+  int i, j;
   DBL w, tmp;
   VEC Vres;
 
@@ -577,6 +593,13 @@ __inline DBL Rnd1( VOID )
 {
   return 2.0 * rand() / RAND_MAX - 1;
 } /* End of 'Rnd1' function */
+
+
+/**/
+MATR MatrView( VEC Loc, VEC At, VEC Up1 );
+/**/
+MATR MatrFrustum( DBL l, DBL r, DBL b, DBL t, DBL n, DBL f );
+MATR MatrOrtho( DBL l, DBL r, DBL b, DBL t, DBL n, DBL f );
 
 #endif /* __VEC_H_ */
 

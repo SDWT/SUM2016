@@ -27,7 +27,7 @@ static UINT64
 INT DS1_MouseWheel = 0;
 
 /* Global system info on display */
-BOOL DS1_IsSysInfo = 0;
+BOOL DS1_IsSysInfo = 0, DS1_IsKeyInfo = 0;
 
 /* Global animation context */
 ds1ANIM DS1_Anim;
@@ -58,7 +58,9 @@ VOID DS1_AnimInit( HWND hWnd )
   DS1_StartTime = DS1_OldTime = DS1_OldTimeFPS = t.QuadPart;
   DS1_PauseTime = 0;
 
-
+  DS1_RndMatrWorld = MatrixIdentity();
+  DS1_RndMatrProj = MatrFrustum(-1, 1, -1, 1, 1, 100);
+  DS1_RndMatrView = MatrView(VecSet(5, 5, 5), VecSet(0, 0, 0), VecSet(0, 1, 0));
 } /* End of 'DS1_ANIMInit' function */
 
 /* Animation system deinitialization function.
@@ -102,7 +104,7 @@ VOID DS1_AnimResize( INT W, INT H )
   ReleaseDC(DS1_Anim.hWnd, hDC);
   SelectObject(DS1_Anim.hDC, DS1_Anim.hFrame);
 
-
+  DS1_RndSetProj();
 } /* End of 'DS1_AnimResize' function */
 
 /* Double buffer frame copy function.
@@ -128,6 +130,7 @@ VOID DS1_AnimRender( VOID )
   HPEN hPen;
   HBRUSH hBr;
   POINT pt;
+  static VEC tr = {0, 0, 0};
   /*** Obtain input system state ***/
 
   /*** Handle timer ***/
@@ -211,6 +214,8 @@ VOID DS1_AnimRender( VOID )
     }
   }
   
+  tr = VecAddVec(tr, VecSet(DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ));
+  /*DS1_RndMatrView = MatrixTranslate(DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ);
   /*
   */
   /*** Send response to all units ***/
@@ -247,12 +252,25 @@ VOID DS1_AnimRender( VOID )
       DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ, DS1_Anim.JR, DS1_Anim.JPov));
     SetBkMode(DS1_Anim.hDC, OPAQUE);
   }
+  if (DS1_IsKeyInfo)
+  {
+    INT j;
+    SetBkMode(DS1_Anim.hDC, TRANSPARENT);
+    for (j = 0; j < 256; j++)
+    {
+      sprintf(StrBuf, "KeyNum: %d - %d;", j, DS1_Anim.Keys[j]);
+      TextOut(DS1_Anim.hDC, 120 * (j / 20), 100 + (j * 10 + 10) % 200, StrBuf, strlen(StrBuf));
+    }
+    SetBkMode(DS1_Anim.hDC, OPAQUE);
+  }
   if (DS1_Anim.Keys[VK_MENU] && DS1_Anim.KeysClick[VK_RETURN])
     DS1_FlipFullScreen();
   if (DS1_Anim.KeysClick[VK_ESCAPE])
     PostMessage(DS1_Anim.hWnd, WM_CLOSE, 0, 0);
   if (DS1_Anim.KeysClick[VK_F2])
     DS1_IsSysInfo = !DS1_IsSysInfo;
+  if (DS1_Anim.KeysClick[VK_F3])
+    DS1_IsKeyInfo = !DS1_IsKeyInfo;
 
   /*. . .*/
 } /* End of 'DS1_ANIMRender' function */
