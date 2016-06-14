@@ -24,7 +24,6 @@ typedef struct
   HGLRC hGLRC;                     /* Rendering context */
 
   INT W, H;                        /* window size */
-  HBITMAP hFrame;                  /* picture frame */
   ds1UNIT *Units[DS1_MAX_UNITS];   /* animation object array */
   INT NumOfUnits;                  /* is now number animation object */
   /* Timer data */
