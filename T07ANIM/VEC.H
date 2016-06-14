@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#pragma warning (disable:4244)
 /* Base float-point types */
 typedef float FLT;
 typedef double DBL;
@@ -20,13 +21,18 @@ typedef double DBL;
 /* Space vector point representation type */
 typedef struct tagVEC
 {
-  DBL X, Y, Z;
+  FLT X, Y, Z;
 } VEC;
 
+/* Plane vector point representation type */
+typedef struct tagVEC2
+{
+  FLT X, Y;
+} VEC2;
 /* Vector matrix representation type */
 typedef struct tagMATR
 {
-  DBL A[4][4];
+  FLT A[4][4];
 } MATR;
 
 
@@ -37,11 +43,11 @@ typedef struct tagMATR
 /* Setup vector coordinates function.
  * ARGUMENTS:
  *   - vector coordinates:
- *       DBL X, Y, Z;
+ *       FLT X, Y, Z;
  * RETURNS:
  *   (VEC) result vector.
  */
-__inline VEC VecSet( DBL X, DBL Y, DBL Z )
+__inline VEC VecSet( FLT X, FLT Y, FLT Z )
 {
   VEC r;
   r.X = X, r.Y = Y, r.Z = Z;
@@ -89,11 +95,11 @@ __inline VEC VecNeg( VEC A )
  *   - vector to be mull:
  *       VEC A;
  *   - number to be mull:
- *       DBL N;
+ *       FLT N;
  * RETURNS:
  *   (VEC) result vector.
  */
-__inline VEC VecMullNum( VEC A, DBL N )
+__inline VEC VecMullNum( VEC A, FLT N )
 {
   return VecSet( A.X * N, A.Y * N, A.Z * N );
 } /* End of 'VecMullNum' function */
@@ -103,11 +109,11 @@ __inline VEC VecMullNum( VEC A, DBL N )
  *   - vector to be div:
  *       VEC A;
  *   - number to be div:
- *       DBL N;
+ *       FLT N;
  * RETURNS:
  *   (VEC) result vector.
  */
-__inline VEC VecDivNum( VEC A, DBL N )
+__inline VEC VecDivNum( VEC A, FLT N )
 {
   return VecSet( A.X / N, A.Y / N, A.Z / N );
 } /* End of 'VecDivNum' function */
@@ -117,9 +123,9 @@ __inline VEC VecDivNum( VEC A, DBL N )
  *   - vectors to be dot:
  *       VEC A, B;
  * RETURNS:
- *   (DBL) result number.
+ *   (FLT) result number.
  */
-__inline DBL VecDotVec( VEC A, VEC B )
+__inline FLT VecDotVec( VEC A, VEC B )
 {
   return  A.X * B.X + A.Y * B.Y + A.Z * B.Z;
 } /* End of 'VecDotVec' function */
@@ -133,7 +139,7 @@ __inline DBL VecDotVec( VEC A, VEC B )
  */
 __inline VEC VecCrossVec( VEC A, VEC B )
 {
-  DBL 
+  FLT 
     X = A.Y * B.Z - A.Z * B.Y,
     Y = A.Z * B.X - A.X * B.Z,
     Z = A.X * B.Y - A.Y * B.X;
@@ -145,9 +151,9 @@ __inline VEC VecCrossVec( VEC A, VEC B )
  *   - vector:
  *       VEC A;
  * RETURNS:
- *   (DBL) result number.
+ *   (FLT) result number.
  */
-__inline DBL VecLen2( VEC A )
+__inline FLT VecLen2( VEC A )
 {
   return  VecDotVec(A, A);
 } /* End of 'VecLen2' function */
@@ -157,12 +163,12 @@ __inline DBL VecLen2( VEC A )
  *   - vector:
  *       VEC A;
  * RETURNS:
- *   (DBL) result number.
+ *   (FLT) result number.
  */
-__inline DBL VecLen( VEC A )
+__inline FLT VecLen( VEC A )
 {
-  DBL Len = VecLen2(A);
-  return  ((Len == 1) || (Len == 0)) ? Len : sqrt(Len);
+  FLT Len = VecLen2(A);
+  return  ((Len == 1) || (Len == 0)) ? Len : sqrtf(Len);
 } /* End of 'VecLen' function */
 
 /* Length of vector function.
@@ -174,10 +180,10 @@ __inline DBL VecLen( VEC A )
  */
 __inline VEC VecNorlize( VEC A )
 {
-  DBL len = VecLen2(A);
+  FLT len = VecLen2(A);
 
   if (len != 0 && len != 1)
-    len = sqrt(len), A.X /= len, A.Y /= len, A.Z /= len;
+    len = sqrtf(len), A.X /= len, A.Y /= len, A.Z /= len;
   return A;
 } /* End of 'VecNorlize' function */
 
@@ -190,10 +196,10 @@ __inline VEC VecNorlize( VEC A )
  */
 __inline VEC VecNormalize( VEC V )
 {
-  DBL len = VecDotVec(V, V);
+  FLT len = VecDotVec(V, V);
 
   if (len != 1 && len != 0)
-    len = sqrt(len), V.X /= len, V.Y /= len, V.Z /= len;
+    len = sqrtf(len), V.X /= len, V.Y /= len, V.Z /= len;
   return V;
 } /* End of 'VecNormalize' function */
 
@@ -224,11 +230,11 @@ __inline MATR MatrixIdentity( VOID )
 /* Translate matrix function.
  * ARGUMENTS:
  *   - matrix numbers to translate:
- *       DBL DX, DY, DZ;
+ *       FLT DX, DY, DZ;
  * RETURNS:
  *   (MATR) result matrix.
  */
-__inline MATR MatrixTranslate( DBL DX, DBL DY, DBL DZ )
+__inline MATR MatrixTranslate( FLT DX, FLT DY, FLT DZ )
 {
   MATR m = MatrixIdentity();
 
@@ -242,11 +248,11 @@ __inline MATR MatrixTranslate( DBL DX, DBL DY, DBL DZ )
 /* Scale matrix function.
  * ARGUMENTS:
  *   - matrix numbers to scale:
- *       DBL DX, DY, DZ;
+ *       FLT DX, DY, DZ;
  * RETURNS:
  *   (MATR) result matrix.
  */
-__inline MATR MatrixScale( DBL SX, DBL SY, DBL SZ )
+__inline MATR MatrixScale( FLT SX, FLT SY, FLT SZ )
 {
   MATR m = MatrixIdentity();
 
@@ -260,7 +266,7 @@ __inline MATR MatrixScale( DBL SX, DBL SY, DBL SZ )
 /* Rotate by x matrix function.
  * ARGUMENTS:
  *   - avengle to rotate by x:
- *       DBL AngleInDegree;
+ *       FLT AngleInDegree;
  * RETURNS:
  *   (MATR) result matrix.
  */
@@ -288,7 +294,7 @@ __inline MATR MatrixRotateX( DBL AngleInDegree )
 /* Rotate by y matrix function.
  * ARGUMENTS:
  *   - avengle to rotate by y:
- *       DBL AngleInDegree;
+ *       FLT AngleInDegree;
  * RETURNS:
  *   (MATR) result matrix.
  */
@@ -316,7 +322,7 @@ __inline MATR MatrixRotateY( DBL AngleInDegree )
 /* Rotate by z matrix function.
  * ARGUMENTS:
  *   - avengle to rotate by z:
- *       DBL AngleInDegree;
+ *       FLT AngleInDegree;
  * RETURNS:
  *   (MATR) result matrix.
  */
@@ -344,13 +350,13 @@ __inline MATR MatrixRotateZ( DBL AngleInDegree )
 /* Rotate matrix function.
  * ARGUMENTS:
  *   - avengle to rotate by z:
- *       DBL AngleInDegree;
+ *       FLT AngleInDegree;
  *   - vector numbers to Rotate:
- *       DBL x, y, z;
+ *       FLT x, y, z;
  * RETURNS:
  *   (MATR) result matrix.
  */
-__inline MATR MatrixRotate( DBL AngleInDegree, DBL x, DBL y, DBL z )
+__inline MATR MatrixRotate( DBL AngleInDegree, FLT x, FLT y, FLT z )
 {
   MATR m = MatrixIdentity();
   DBL X, Y, Z, CosA, SinA, MultiplierD2R;
@@ -407,15 +413,15 @@ __inline MATR MatrMulMatr( MATR M1, MATR M2 )
 /* Matrix 3x3 determ function.
  * ARGUMENTS:
  *   - matrix numbers:
- *       DBL A11, A12, A13,
+ *       FLT A11, A12, A13,
              A21, A22, A23,
              A31, A32, A33;
  * RETURNS:
- *   (DBL) result Determ 3x3.
+ *   (FLT) result Determ 3x3.
  */
-__inline DBL MatrDeterm3x3( DBL A11, DBL A12, DBL A13,
-                            DBL A21, DBL A22, DBL A23,
-                            DBL A31, DBL A32, DBL A33)
+__inline FLT MatrDeterm3x3( FLT A11, FLT A12, FLT A13,
+                            FLT A21, FLT A22, FLT A23,
+                            FLT A31, FLT A32, FLT A33)
 {
   return  A11 * A22 * A33 + A12 * A23 * A31 + 
           A13 * A21 * A32 - A11 * A23 * A32 - 
@@ -427,9 +433,9 @@ __inline DBL MatrDeterm3x3( DBL A11, DBL A12, DBL A13,
  *   - matrixs to be mull:
  *       MATR A;
  * RETURNS:
- *   (DBL) result Determ.
+ *   (FLT) result Determ.
  */
-__inline DBL MatrDeterm( MATR M )
+__inline FLT MatrDeterm( MATR M )
 {
   return
     M.A[0][0] * MatrDeterm3x3(M.A[1][1], M.A[1][2], M.A[1][3],
@@ -464,7 +470,7 @@ __inline MATR MatrInverse( MATR M )
     {0, 1, 3},
     {0, 1, 2}
   };
-  DBL det = MatrDeterm(M);
+  FLT det = MatrDeterm(M);
   
   if (det == 0)
     return MatrixIdentity();
@@ -500,7 +506,7 @@ __inline MATR MatrInverse( MATR M )
  */
 __inline VEC VecTransform( VEC V, MATR M )
 {
-  DBL w = V.X * M.A[0][3] + V.Y * M.A[1][3] + V.Z * M.A[2][3];
+  FLT w = V.X * M.A[0][3] + V.Y * M.A[1][3] + V.Z * M.A[2][3];
   VEC Vres;
 
   Vres.X = (V.X * M.A[0][0] + V.Y * M.A[1][0] + V.Z * M.A[2][0]) / w;
@@ -522,7 +528,7 @@ return Vres;
 __inline VEC PointTransform( VEC V, MATR M )
 {
   int i, j;
-  DBL tmp, w = V.X * M.A[0][3] + V.Y * M.A[1][3] + V.Z * M.A[2][3] + M.A[3][3];
+  FLT tmp, w = V.X * M.A[0][3] + V.Y * M.A[1][3] + V.Z * M.A[2][3] + M.A[3][3];
   VEC Vres;
 
   M = MatrInverse(M);
@@ -534,6 +540,28 @@ __inline VEC PointTransform( VEC V, MATR M )
       M.A[j][i] = tmp;
     }
 
+    Vres.X = (V.X * M.A[0][0] + V.Y * M.A[1][0] + V.Z * M.A[2][0] + M.A[3][0]) / w;
+  Vres.Y = (V.X * M.A[0][1] + V.Y * M.A[1][1] + V.Z * M.A[2][1] + M.A[3][1]) / w;
+  Vres.Z = (V.X * M.A[0][2] + V.Y * M.A[1][2] + V.Z * M.A[2][2] + M.A[3][2]) / w;
+
+return Vres;
+
+} /* End of 'PointTransform' function */
+
+/* Transform point function.
+ * ARGUMENTS:
+ *   - vectors to be add:
+ *       VEC V;
+ *   - matrix:
+ *       MATR M;
+ * RETURNS:
+ *   (VEC) result vector.
+ */
+__inline VEC PointTransform4( VEC V, MATR M )
+{
+  FLT w = V.X * M.A[0][3] + V.Y * M.A[1][3] + V.Z * M.A[2][3] + M.A[3][3];
+  VEC Vres;
+
   Vres.X = (V.X * M.A[0][0] + V.Y * M.A[1][0] + V.Z * M.A[2][0] + M.A[3][0]) / w;
   Vres.Y = (V.X * M.A[0][1] + V.Y * M.A[1][1] + V.Z * M.A[2][1] + M.A[3][1]) / w;
   Vres.Z = (V.X * M.A[0][2] + V.Y * M.A[1][2] + V.Z * M.A[2][2] + M.A[3][2]) / w;
@@ -541,6 +569,7 @@ __inline VEC PointTransform( VEC V, MATR M )
 return Vres;
 
 } /* End of 'PointTransform' function */
+
 
 /* Transform Normal function.
  * ARGUMENTS:
@@ -554,7 +583,7 @@ return Vres;
 __inline VEC NormalTransform( VEC V, MATR InvM )
 {
   int i, j;
-  DBL w, tmp;
+  FLT w, tmp;
   VEC Vres;
 
   InvM = MatrInverse(InvM);
@@ -577,29 +606,29 @@ return Vres;
 /* Random number obtain in range [0.0 .. 1.0] function.
  * ARGUMENTS: None.
  * RETURNS:
- *   (DBL) result random number.
+ *   (FLT) result random number.
  */
-__inline DBL Rnd0( VOID )
+__inline FLT Rnd0( VOID )
 {
-  return (DBL)rand() / RAND_MAX;
+  return (FLT)rand() / RAND_MAX;
 } /* End of 'Rnd0' function */
 
 /* Random number obtain in range [-1.0 .. 1.0] function.
  * ARGUMENTS: None.
  * RETURNS:
- *   (DBL) result random number.
+ *   (FLT) result random number.
  */
-__inline DBL Rnd1( VOID )
+__inline FLT Rnd1( VOID )
 {
-  return 2.0 * rand() / RAND_MAX - 1;
+  return 2.0f * rand() / RAND_MAX - 1;
 } /* End of 'Rnd1' function */
 
 
 /**/
 MATR MatrView( VEC Loc, VEC At, VEC Up1 );
 /**/
-MATR MatrFrustum( DBL l, DBL r, DBL b, DBL t, DBL n, DBL f );
-MATR MatrOrtho( DBL l, DBL r, DBL b, DBL t, DBL n, DBL f );
+MATR MatrFrustum( FLT l, FLT r, FLT b, FLT t, FLT n, FLT f );
+MATR MatrOrtho( FLT l, FLT r, FLT b, FLT t, FLT n, FLT f );
 
 #endif /* __VEC_H_ */
 

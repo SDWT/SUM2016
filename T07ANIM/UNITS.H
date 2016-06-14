@@ -7,7 +7,7 @@
 #ifndef __UNITS_H_
 #define __UNITS_H_
 
-#include "def.h"
+#include "anim.h"
 
 /* Unit samples */
 ds1UNIT * DS1_UnitCreateGlobe( INT X, INT Y, INT R );

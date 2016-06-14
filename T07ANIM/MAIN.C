@@ -9,7 +9,7 @@
 #include <math.h>
 #include <windows.h>
 
-#include "anim.h"
+
 #include "units.h"
 
 /* My window class */
@@ -64,7 +64,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       "30!",
                       WS_OVERLAPPEDWINDOW,
                       CW_USEDEFAULT, CW_USEDEFAULT,
-                      1600, 800,
+                      1000, 1000,
                       NULL, NULL, hInstance, NULL);
   if (hWnd == NULL)
   {
@@ -80,9 +80,9 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   LoadSphere();
   /*DS1_AnimAddUnit(DS1_UnitCreateGlobe(1600 / 4, 800 / 2, (2400) / 10));*/
   /*DS1_AnimAddUnit(DS1_UnitCreateGlobe(3 * 1600 / 4, 800 / 2, (2400) / 10));*/
-  DS1_AnimAddUnit(DS1_UnitCreateSprite(-70, -80, "SDAND.BMP", "SDXOR.BMP"));
   DS1_AnimAddUnit(DS1_UnitCreateCube());
-
+  DS1_AnimAddUnit(DS1_UnitCreateSprite(-70, -80, "SDAND.BMP", "SDXOR.BMP"));
+  
   /* Run message loop */
   while (GetMessage(&msg, NULL, 0, 0))
     DispatchMessage(&msg);

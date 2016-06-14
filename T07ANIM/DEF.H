@@ -10,6 +10,8 @@
 
 #include <windows.h>
 
+#pragma warning (disable:4244)
+
 /* Debug memory allocation support */
 #ifdef _DEBUG
 #  define _CRTDBG_MAP_ALLOC

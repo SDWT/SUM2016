@@ -32,6 +32,63 @@ BOOL DS1_IsSysInfo = 0, DS1_IsKeyInfo = 0;
 /* Global animation context */
 ds1ANIM DS1_Anim;
 
+static VOID DS1_ControlModule( VOID )
+{
+  CHAR StrBuf[200];
+  FLT x = 0, y = 0, z = 0;
+  static FLT jx = 0, jy = 0, jz = 0;
+  static VEC tr = {0, 0, 3};
+
+  if (DS1_IsSysInfo)
+  {
+    SetBkMode(DS1_Anim.hDC, TRANSPARENT);
+    TextOut(DS1_Anim.hDC, 0, 0, StrBuf, sprintf(StrBuf, "Input info: "
+      "Mx: %6d; Mdx: %6d; My: %6d; Mdy: %6d; Mz: %6d; Mdz: %6d; "
+      "Jx: %5.3lf; Jy: %5.3lf; Jz: %5.3lf; Jr: %5.3lf; JPov: %2d.", 
+      DS1_Anim.Mx, DS1_Anim.Mdx, DS1_Anim.My, DS1_Anim.Mdy, DS1_Anim.Mz, DS1_Anim.Mdz,
+      DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ, DS1_Anim.JR, DS1_Anim.JPov));
+    SetBkMode(DS1_Anim.hDC, OPAQUE);
+  }
+  if (DS1_IsKeyInfo)
+  {
+    INT j;
+    SetBkMode(DS1_Anim.hDC, TRANSPARENT);
+    for (j = 0; j < 256; j++)
+    {
+      sprintf(StrBuf, "KeyNum: %d - %d;", j, DS1_Anim.Keys[j]);
+      TextOut(DS1_Anim.hDC, 120 * (j / 20), 100 + (j * 10 + 10) % 200, StrBuf, strlen(StrBuf));
+    }
+    SetBkMode(DS1_Anim.hDC, OPAQUE);
+  }
+  if (DS1_Anim.Keys[VK_MENU] && DS1_Anim.KeysClick[VK_RETURN])
+    DS1_FlipFullScreen();
+  if (DS1_Anim.KeysClick[VK_ESCAPE])
+    PostMessage(DS1_Anim.hWnd, WM_CLOSE, 0, 0);
+  if (DS1_Anim.KeysClick[VK_F2])
+    DS1_IsSysInfo = !DS1_IsSysInfo;
+  if (DS1_Anim.KeysClick[VK_F3])
+    DS1_IsKeyInfo = !DS1_IsKeyInfo;
+
+
+  if (DS1_Anim.JPov == 1 || DS1_Anim.JPov == 2 || DS1_Anim.JPov == 8)
+    z = -1;
+  if (DS1_Anim.JPov == 3 || DS1_Anim.JPov == 2 || DS1_Anim.JPov == 4)
+    x = 1;
+  if (DS1_Anim.JPov == 4 || DS1_Anim.JPov == 5 || DS1_Anim.JPov == 6)
+    z = 1;
+  if (DS1_Anim.JPov == 7 || DS1_Anim.JPov == 8 || DS1_Anim.JPov == 6)  
+    x = -1;
+  tr = VecAddVec(tr, VecSet(x, y, z));
+  jx = DS1_Anim.JX;
+  jy = DS1_Anim.JY;
+/*  MatrixTranslate(DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ);*/
+  DS1_RndMatrView = MatrView(tr, VecSet(0, 0, 0), VecSet(0, 1, 0));
+  DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrMulMatr(MatrixRotateY(jx), MatrixRotateX(jy)));
+  
+
+} /* End of 'DS1_ControlModule' function */
+
+
 /* Animation system initialization function.
  * ARGUMENTS:
  *   - window:
@@ -60,7 +117,7 @@ VOID DS1_AnimInit( HWND hWnd )
 
   DS1_RndMatrWorld = MatrixIdentity();
   DS1_RndMatrProj = MatrFrustum(-1, 1, -1, 1, 1, 100);
-  DS1_RndMatrView = MatrView(VecSet(5, 5, 5), VecSet(0, 0, 0), VecSet(0, 1, 0));
+  DS1_RndMatrView = MatrView(VecSet(0, 0, 3), VecSet(0, 0, 0), VecSet(0, 1, 0));
 } /* End of 'DS1_ANIMInit' function */
 
 /* Animation system deinitialization function.
@@ -125,12 +182,10 @@ VOID DS1_AnimCopyFrame( HDC hDC )
 VOID DS1_AnimRender( VOID )
 {
   int i;
-  CHAR StrBuf[200];
   LARGE_INTEGER t;
   HPEN hPen;
   HBRUSH hBr;
   POINT pt;
-  static VEC tr = {0, 0, 0};
   /*** Obtain input system state ***/
 
   /*** Handle timer ***/
@@ -214,10 +269,8 @@ VOID DS1_AnimRender( VOID )
     }
   }
   
-  tr = VecAddVec(tr, VecSet(DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ));
-  /*DS1_RndMatrView = MatrixTranslate(DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ);
-  /*
-  */
+  DS1_ControlModule();
+
   /*** Send response to all units ***/
   for (i = 0; i < DS1_Anim.NumOfUnits; i++)
     DS1_Anim.Units[i]->Response(DS1_Anim.Units[i], &DS1_Anim);
@@ -242,35 +295,6 @@ VOID DS1_AnimRender( VOID )
     DS1_Anim.Units[i]->Render(DS1_Anim.Units[i], &DS1_Anim);
   }
 
-  if (DS1_IsSysInfo)
-  {
-    SetBkMode(DS1_Anim.hDC, TRANSPARENT);
-    TextOut(DS1_Anim.hDC, 0, 0, StrBuf, sprintf(StrBuf, "Input info: "
-      "Mx: %6d; Mdx: %6d; My: %6d; Mdy: %6d; Mz: %6d; Mdz: %6d; "
-      "Jx: %5.3lf; Jy: %5.3lf; Jz: %5.3lf; Jr: %5.3lf; JPov: %2d.", 
-      DS1_Anim.Mx, DS1_Anim.Mdx, DS1_Anim.My, DS1_Anim.Mdy, DS1_Anim.Mz, DS1_Anim.Mdz,
-      DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ, DS1_Anim.JR, DS1_Anim.JPov));
-    SetBkMode(DS1_Anim.hDC, OPAQUE);
-  }
-  if (DS1_IsKeyInfo)
-  {
-    INT j;
-    SetBkMode(DS1_Anim.hDC, TRANSPARENT);
-    for (j = 0; j < 256; j++)
-    {
-      sprintf(StrBuf, "KeyNum: %d - %d;", j, DS1_Anim.Keys[j]);
-      TextOut(DS1_Anim.hDC, 120 * (j / 20), 100 + (j * 10 + 10) % 200, StrBuf, strlen(StrBuf));
-    }
-    SetBkMode(DS1_Anim.hDC, OPAQUE);
-  }
-  if (DS1_Anim.Keys[VK_MENU] && DS1_Anim.KeysClick[VK_RETURN])
-    DS1_FlipFullScreen();
-  if (DS1_Anim.KeysClick[VK_ESCAPE])
-    PostMessage(DS1_Anim.hWnd, WM_CLOSE, 0, 0);
-  if (DS1_Anim.KeysClick[VK_F2])
-    DS1_IsSysInfo = !DS1_IsSysInfo;
-  if (DS1_Anim.KeysClick[VK_F3])
-    DS1_IsKeyInfo = !DS1_IsKeyInfo;
 
   /*. . .*/
 } /* End of 'DS1_ANIMRender' function */

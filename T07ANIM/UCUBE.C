@@ -11,6 +11,7 @@
 typedef struct
 {
   ds1UNIT;
+  ds1PRIM Pr;
 } ds1UNIT_CUBE;
 
 VEC CubeP[] =
@@ -55,8 +56,7 @@ ds1PRIM Cube =
  */
 static VOID DS1_UnitInit( ds1UNIT_CUBE *Uni, ds1ANIM *Ani )
 {
-
-
+  DS1_RndPrimLoad(&Uni->Pr, "modela\\cow.g3d");
 
 } /* End of 'VG4_UnitInit' function */
 
@@ -70,6 +70,7 @@ static VOID DS1_UnitInit( ds1UNIT_CUBE *Uni, ds1ANIM *Ani )
  */
 static VOID DS1_UnitClose( ds1UNIT_CUBE *Uni, ds1ANIM *Ani )
 {
+  DS1_RndPrimFree(&Uni->Pr);
 } /* End of 'DS1_UnitClose' function */
 
 /* Unit render function.
@@ -83,7 +84,8 @@ static VOID DS1_UnitClose( ds1UNIT_CUBE *Uni, ds1ANIM *Ani )
 static VOID DS1_UnitRender( ds1UNIT_CUBE *Uni, ds1ANIM *Ani )
 {
   /*DS1_RndMatrWorld = MatrixScale(1, 1, 1);/*MatrixRotate(Ani->Time, 0, 1, 0);,);*/
-  DS1_RndPrimDraw(&Cube);
+  /*DS1_RndPrimDraw(&Cube);*/
+  DS1_RndPrimDraw(&Uni->Pr);
 } /* End of 'DS1_UnitRender' function */
 
 /* Unit cube creation function.

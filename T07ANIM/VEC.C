@@ -30,7 +30,7 @@ MATR MatrView( VEC Loc, VEC At, VEC Up1 )
 /*
  *
  */
-MATR MatrFrustum( DBL l, DBL r, DBL b, DBL t, DBL n, DBL f )
+MATR MatrFrustum( FLT l, FLT r, FLT b, FLT t, FLT n, FLT f )
 {
   MATR m = 
   {
@@ -45,7 +45,7 @@ MATR MatrFrustum( DBL l, DBL r, DBL b, DBL t, DBL n, DBL f )
   return m;
 }
 
-MATR MatrOrtho( DBL l, DBL r, DBL b, DBL t, DBL n, DBL f )
+MATR MatrOrtho( FLT l, FLT r, FLT b, FLT t, FLT n, FLT f )
 {
   MATR m = 
   {

@@ -18,6 +18,12 @@ typedef struct
   INT NumOfE;      /* Edges array size */
 } ds1PRIM;
 
+/* Color representation type */
+typedef struct tagds1COLOR
+{
+  FLT R, G, B, A;
+} ds1COLOR;
+
 extern MATR DS1_RndMatrWorld, DS1_RndMatrView, DS1_RndMatrProj;
 extern DBL DS1_RndProjSize, DS1_RndProjDist, DS1_RndFarClip;
 
@@ -36,6 +42,24 @@ VOID DS1_RndSetProj( VOID );
  */
 VOID DS1_RndPrimDraw( ds1PRIM *Pr );
 
+/* Primitive free function.
+ * ARGUMENTS:
+ *   - primtive to free:
+ *       ds1PRIM *Pr;
+ * RETURNS: None.
+ */
+VOID DS1_RndPrimFree( ds1PRIM *Pr );
+
+/* Load primitive from '*.g3d' file function.
+ * ARGUMENTS:
+ *   - primitive structure pointer:
+ *       ds1PRIM *Pr;
+ *   - file name:
+ *       CHAR *FileName;
+ * RETURNS:
+ *   (BOOL) TRUE is success, FALSE otherwise.
+ */
+BOOL DS1_RndPrimLoad( ds1PRIM *Pr, CHAR *FileName );
 
 #endif /* __RENDER_H_ */
 
