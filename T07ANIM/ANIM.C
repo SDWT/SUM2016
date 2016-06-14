@@ -34,11 +34,11 @@ ds1ANIM DS1_Anim;
 
 static VOID DS1_ControlModule( VOID )
 {
-  CHAR StrBuf[200];
+  /*CHAR StrBuf[200];*/
   FLT x = 0, y = 0, z = 0;
   static FLT jx = 0, jy = 0, jz = 0;
   static VEC tr = {0, 0, 3};
-
+  /*
   if (DS1_IsSysInfo)
   {
     SetBkMode(DS1_Anim.hDC, TRANSPARENT);
@@ -60,6 +60,7 @@ static VOID DS1_ControlModule( VOID )
     }
     SetBkMode(DS1_Anim.hDC, OPAQUE);
   }
+  */
   if (DS1_Anim.Keys[VK_MENU] && DS1_Anim.KeysClick[VK_RETURN])
     DS1_FlipFullScreen();
   if (DS1_Anim.KeysClick[VK_ESCAPE])
@@ -68,6 +69,8 @@ static VOID DS1_ControlModule( VOID )
     DS1_IsSysInfo = !DS1_IsSysInfo;
   if (DS1_Anim.KeysClick[VK_F3])
     DS1_IsKeyInfo = !DS1_IsKeyInfo;
+  if (DS1_Anim.KeysClick['p'])
+    DS1_Anim.IsPause = !DS1_Anim.IsPause;
 
 
   if (DS1_Anim.JPov == 1 || DS1_Anim.JPov == 2 || DS1_Anim.JPov == 8)
@@ -81,9 +84,9 @@ static VOID DS1_ControlModule( VOID )
   tr = VecAddVec(tr, VecSet(x, y, z));
   jx = DS1_Anim.JX;
   jy = DS1_Anim.JY;
-/*  MatrixTranslate(DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ);*/
+  /*MatrixTranslate(DS1_Anim.JX, DS1_Anim.JY, DS1_Anim.JZ);*/
   DS1_RndMatrView = MatrView(tr, VecSet(0, 0, 0), VecSet(0, 1, 0));
-  DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrMulMatr(MatrixRotateY(jx), MatrixRotateX(jy)));
+  /*DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrMulMatr(, MatrixRotateX(jy)));*/
   
 
 } /* End of 'DS1_ControlModule' function */

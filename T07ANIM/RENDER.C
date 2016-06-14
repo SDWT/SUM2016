@@ -63,13 +63,13 @@ VOID DS1_RndPrimDraw( ds1PRIM *Pr )
     pts[i].y = (LONG)((-p.Y + 1) * DS1_Anim.H / 2);
   }
 
-  /*SelectObject(DS1_Anim.hDC, GetStockObject(DC_PEN));*/
+  SelectObject(DS1_Anim.hDC, GetStockObject(DC_PEN));
   /* Draw all lines */
   for (i = 0; i < Pr->NumOfE; i++)
   {
     INT n0 = Pr->Edges[i][0], n1 = Pr->Edges[i][1];
 
-    /*SetDCPenColor(DS1_Anim.hDC, RGB(i * 255 / Pr->NumOfE, 0, 255 - i * 255 / Pr->NumOfE));*/
+    SetDCPenColor(DS1_Anim.hDC, RGB(i * 255 / Pr->NumOfE, 0, 255 - i * 255 / Pr->NumOfE));
 
     MoveToEx(DS1_Anim.hDC, pts[n0].x, pts[n0].y, NULL);
     LineTo(DS1_Anim.hDC, pts[n1].x, pts[n1].y);
