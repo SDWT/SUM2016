@@ -1,6 +1,6 @@
 /* FILENAME: SPRITE.C
  * PROGRAMMER: DS1
- * DATE: 14.06.2016
+ * DATE: 15.06.2016
  * PURPOSE: Sprite unit drawing module
  */
 
@@ -47,9 +47,13 @@ static VOID DS1_UnitResponse( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
     DS1_IsSysInfo = !DS1_IsSysInfo;
   if (Ani->KeysClick[VK_F3])
     DS1_IsKeyInfo = !DS1_IsKeyInfo;
-  if (Ani->KeysClick['p'])
+  if (Ani->KeysClick['P'])
     Ani->IsPause = !Ani->IsPause;
-
+  if (Ani->KeysClick['R'])
+  {
+    DS1_RndShaderFree(DS1_RndPrg);
+    DS1_RndPrg = DS1_RndShaderLoad("a");
+  }
   if (Ani->JPov == 1 || Ani->JPov == 2 || Ani->JPov == 8)
     z = -1;
   else if (Ani->JPov == 4 || Ani->JPov == 5 || Ani->JPov == 6)
@@ -72,14 +76,15 @@ static VOID DS1_UnitResponse( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
   if (Ani->Keys[VK_LBUTTON])
   {
     Uni->Pos = VecTransform43(Uni->Pos, MatrRotateY(59 * Ani->Mdx * Ani->GlobalDeltaTime));
-    Uni->Pos = VecTransform43(Uni->Pos, MatrRotate(59 * Ani->Mdy * Ani->GlobalDeltaTime, VecNormalize(VecCrossVec(VecNormalize(VecSubVec(at, Uni->Pos)), up1))));
+    Uni->Pos = VecTransform43(Uni->Pos, MatrRotate(59 * Ani->Mdy * Ani->GlobalDeltaTime,
+                 VecNormalize(VecCrossVec(VecNormalize(VecSubVec(at, Uni->Pos)), up1))));
   }
 
   Uni->Pos = VecTransform43(Uni->Pos, MatrRotateY(59 * Ani->Keys[VK_RIGHT] * Ani->GlobalDeltaTime));
   Uni->Pos = VecTransform43(Uni->Pos, MatrRotateY(-59 * Ani->Keys[VK_LEFT] * Ani->GlobalDeltaTime));
 
   r = VecLen(Uni->Pos);
-  Uni->Pos = VecMullNum(Uni->Pos, (r + -Ani->Mdz * Ani->DeltaTime) / r);
+  Uni->Pos = VecMullNum(Uni->Pos, (r + -Ani->Mdz * Ani->GlobalDeltaTime) / r);
 
   DS1_RndMatrView = MatrView(Uni->Pos, at, up1);
 

@@ -1,6 +1,6 @@
 /* FILENAME: RENDER.C
  * PROGRAMMER: DS1
- * DATE: 14.06.2016
+ * DATE: 15.06.2016
  * PURPOSE: Animation system difinitions
  */
 
@@ -9,7 +9,8 @@
 MATR DS1_RndMatrWorld, 
      DS1_RndMatrView, 
      DS1_RndMatrProj;
-DBL DS1_RndProjSize = 0.1, DS1_RndProjDist = 0.1, DS1_RndFarClip = 100;
+DBL DS1_RndProjSize = 1, DS1_RndProjDist = 1, DS1_RndFarClip = 1000;
+UINT DS1_RndPrg = 0;
 
 /* Setup projection function.
  * ARGUMENTS: None.
@@ -41,7 +42,7 @@ VOID DS1_RndSetProj( VOID )
  */
 VOID DS1_RndPrimDraw( ds1PRIM *Pr )
 {
-  INT i;
+  INT loc;
   MATR M;
 
   /* Build transform matrix */
@@ -49,14 +50,26 @@ VOID DS1_RndPrimDraw( ds1PRIM *Pr )
     MatrMulMatr(DS1_RndMatrView, DS1_RndMatrProj));
   glLoadMatrixf(M.A[0]);
 
-  /* Draw all lines */
-  glBegin(GL_TRIANGLES);
-  for (i = 0; i < Pr->NumOfI; i++)
-  {
-    glColor3fv(&Pr->V[Pr->I[i]].C.R);
-    glVertex3fv(&Pr->V[Pr->I[i]].P.X);
-  }
-  glEnd();
+  glUseProgram(DS1_RndPrg);
+
+  /* Setup global variables */
+  if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrWorld")) != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrWorld.A[0]);
+  if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrView")) != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrView.A[0]);
+  if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrProj")) != -1)
+    glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrProj.A[0]);
+  if ((loc = glGetUniformLocation(DS1_RndPrg, "Time")) != -1)
+    glUniform1f(loc, DS1_Anim.Time);
+
+
+  /* Activete primitive vertex array */
+  glBindVertexArray(Pr->VA);
+  /* Activete primitive index buffer */
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Pr->IBuf);
+  /* Draw primitive */
+  glDrawElements(GL_TRIANGLES, Pr->NumOfI, GL_UNSIGNED_INT, NULL);
+  glUseProgram(0);
 } /* End of 'DS1_RndPrimDraw' function */
 
 /* Primitive free function.
@@ -67,11 +80,14 @@ VOID DS1_RndPrimDraw( ds1PRIM *Pr )
  */
 VOID DS1_RndPrimFree( ds1PRIM *Pr )
 {
-  if (Pr->V != NULL)
-    free(Pr->V);
-  if (Pr->I != NULL)
-    free(Pr->I);
+  glBindVertexArray(Pr->VA);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers(1, &Pr->VBuf);
+  glBindVertexArray(0);
+  glDeleteVertexArrays(1, &Pr->VA);
+  glDeleteBuffers(1, &Pr->IBuf);
   memset(Pr, 0, sizeof(ds1PRIM));
 } /* End of 'DS1_RndPrimFree' function */
+
 
 /* END OF 'RENDER.C' FILE */

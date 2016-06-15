@@ -1,6 +1,6 @@
 /* FILENAME: T07ANIM.C
  * PROGRAMMER: DS1
- * DATE: 14.06.2016
+ * DATE: 15.06.2016
  * PURPOSE: Animation sample
  *          Main module
  */
@@ -64,7 +64,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       "30!",
                       WS_OVERLAPPEDWINDOW,
                       CW_USEDEFAULT, CW_USEDEFAULT,
-                      1000, 1000,
+                      1600, 900,
                       NULL, NULL, hInstance, NULL);
   if (hWnd == NULL)
   {
@@ -77,8 +77,8 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   UpdateWindow(hWnd);
 
   /*** Add unit samples ***/
-  DS1_AnimAddUnit(DS1_UnitCreateCube());
   DS1_AnimAddUnit(DS1_UnitCreateControl());
+  DS1_AnimAddUnit(DS1_UnitCreateModel("modela\\btr.g3d"));
 
   /* Run message loop */
   while (GetMessage(&msg, NULL, 0, 0))

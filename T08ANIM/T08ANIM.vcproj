@@ -212,6 +212,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\SHADERS.C"
+					>
+				</File>
+				<File
 					RelativePath=".\UNITS.C"
 					>
 				</File>
@@ -224,7 +228,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\UCUBE.C"
+					RelativePath=".\U_MODEL.C"
 					>
 				</File>
 				<File

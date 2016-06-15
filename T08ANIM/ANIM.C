@@ -1,6 +1,6 @@
 /* FILENAME: ANIM.C
  * PROGRAMMER: DS1
- * DATE: 14.06.2016
+ * DATE: 15.06.2016
  * PURPOSE: Animation system
  */
 
@@ -93,6 +93,7 @@ VOID DS1_AnimInit( HWND hWnd )
   glClearColor(0.3, 0.5, 0.7, 1);
   */
   glEnable(GL_DEPTH_TEST);
+  DS1_RndPrg = DS1_RndShaderLoad("a");
   /* glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */
 } /* End of 'DS1_ANIMInit' function */
 
@@ -111,6 +112,7 @@ VOID DS1_AnimClose( VOID )
   }
   DS1_Anim.NumOfUnits = 0;
 
+  DS1_RndShaderFree(DS1_RndPrg);
   /* Delete rendering context */
   wglMakeCurrent(NULL, NULL);
   wglDeleteContext(DS1_Anim.hGLRC);
@@ -150,7 +152,7 @@ VOID DS1_AnimRender( VOID )
   int i;
   LARGE_INTEGER t;
   POINT pt;
-  /*** Obtain input system state ***/
+  static DBL ShaderTime = 0;
 
   /*** Handle timer ***/
   DS1_FrameCounter++;
@@ -182,6 +184,7 @@ VOID DS1_AnimRender( VOID )
   }
   DS1_OldTime = t.QuadPart;
 
+  /*** Obtain input system state ***/
   /* Mouse */
   GetCursorPos(&pt);
   ScreenToClient(DS1_Anim.hWnd, &pt);
@@ -233,6 +236,15 @@ VOID DS1_AnimRender( VOID )
     }
   }
 
+  /* Reload shader program */
+  if (ShaderTime > 5)
+  {
+    ShaderTime = 0;
+    DS1_RndShaderFree(DS1_RndPrg);
+    DS1_RndPrg = DS1_RndShaderLoad("a");
+  }
+  ShaderTime += DS1_Anim.GlobalDeltaTime;
+
   /*** Send response to all units ***/
   for (i = 0; i < DS1_Anim.NumOfUnits; i++)
     DS1_Anim.Units[i]->Response(DS1_Anim.Units[i], &DS1_Anim);
@@ -248,7 +260,6 @@ VOID DS1_AnimRender( VOID )
     DS1_Anim.Units[i]->Render(DS1_Anim.Units[i], &DS1_Anim);
   }
 
-  glLoadMatrixf(DS1_RndMatrView.A[0]);
   /* Finalize OpenGL drawing */
   glFinish();
 

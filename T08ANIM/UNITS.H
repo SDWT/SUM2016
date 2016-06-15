@@ -1,6 +1,6 @@
 /* FILENAME: UNITS.H
  * PROGRAMMER: DS1
- * DATE: 14.06.2016
+ * DATE: 15.06.2016
  * PURPOSE: Units difinitions
  */
 
@@ -9,12 +9,14 @@
 
 #include "anim.h"
 
-/* Unit cube creation function.
- * ARGUMENTS: None.
+/* Unit model creation function.
+ * ARGUMENTS: 
+ *   - Model file:
+ *     CHAR *FileName;
  * RETURNS:
  *   (ds1UNIT *) pointer to created unit.
  */
-ds1UNIT * DS1_UnitCreateCube( VOID );
+ds1UNIT * DS1_UnitCreateModel( CHAR *FileName );
 
 /* Unit ball creation function.
  * ARGUMENTS: None.

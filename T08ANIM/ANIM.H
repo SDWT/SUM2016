@@ -1,6 +1,6 @@
 /* FILENAME: ANIM.H
  * PROGRAMMER: DS1
- * DATE: 14.06.2016
+ * DATE: 15.06.2016
  * PURPOSE: Animation system difinitions
  */
 
