@@ -21,11 +21,22 @@ typedef struct
 /* Primitive representation type */
 typedef struct
 {
-  INT VA,      /* vertex array */
-      VBuf,    /* vertex buffer */
-      IBuf;    /* index buffer */
-  INT NumOfI;  /* Facets index array size */
+  /* OpenGL buffers */
+  INT
+    VA,   /* Vertex array */
+    VBuf, /* Vertex buffer */
+    IBuf; /* Index buffer */
+  INT NumOfI;       /* Facets index array size */
+  MATR M; /* Primitive transformation matrix */
 } ds1PRIM;
+
+/* Object representation type */
+typedef struct
+{
+  ds1PRIM *Prims;
+  INT NumOfPrims;
+} ds1OBJ;
+
 
 extern MATR DS1_RndMatrWorld, DS1_RndMatrView, DS1_RndMatrProj;
 extern DBL DS1_RndProjSize, DS1_RndProjDist, DS1_RndFarClip;
@@ -37,21 +48,32 @@ extern UINT DS1_RndPrg;
  */
 VOID DS1_RndSetProj( VOID );
 
-/* Primitive draw function.
+/* Object draw function.
  * ARGUMENTS:
- *   - primtive to draw:
- *       ds1PRIM *Pr;
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
  * RETURNS: None.
  */
-VOID DS1_RndPrimDraw( ds1PRIM *Pr );
+VOID DS1_RndObjDraw( ds1OBJ *Obj );
 
-/* Primitive free function.
+/* Load object from '*.g3d' file function.
  * ARGUMENTS:
- *   - primtive to free:
- *       ds1PRIM *Pr;
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
+ *   - file name:
+ *       CHAR *FileName;
+ * RETURNS:
+ *   (BOOL) TRUE is success, FALSE otherwise.
+ */
+BOOL DS1_RndObjLoad( ds1OBJ *Obj, CHAR *FileName );
+
+/* Object free function.
+ * ARGUMENTS:
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
  * RETURNS: None.
  */
-VOID DS1_RndPrimFree( ds1PRIM *Pr );
+VOID DS1_RndObjFree( ds1OBJ *Obj );
 
 /* Load primitive from '*.g3d' file function.
  * ARGUMENTS:

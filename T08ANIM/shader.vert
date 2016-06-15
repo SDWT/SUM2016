@@ -11,6 +11,7 @@ layout(location = 3) in vec4 InColor;
 uniform mat4 MatrWorld;
 uniform mat4 MatrView;
 uniform mat4 MatrProj;
+uniform int PartNo;
 
 // output data
 out vec4 DrawColor;
@@ -19,6 +20,9 @@ out vec3 DrawNormal;
 
 void main( void )
 {
+
+  //if (PartNo != 9 && PartNo != 18)
+    //return;
   gl_Position = MatrProj * MatrView * MatrWorld * vec4(InPosition, 1);
 
   DrawColor = InColor * (InTexCoord.x + InTexCoord.y); //vec4(InNormal * 2, 1);

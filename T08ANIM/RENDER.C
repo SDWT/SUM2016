@@ -34,60 +34,75 @@ VOID DS1_RndSetProj( VOID )
 } /* End of 'DS1_RndSetProj' function */
 
 
-/* Primitive draw function.
+/* Object draw function.
  * ARGUMENTS:
- *   - primtive to draw:
- *       ds1PRIM *Pr;
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
  * RETURNS: None.
  */
-VOID DS1_RndPrimDraw( ds1PRIM *Pr )
+VOID DS1_RndObjDraw( ds1OBJ *Obj )
 {
+  INT i;
   INT loc;
-  MATR M;
+  MATR M, MSave;
 
-  /* Build transform matrix */
-  M = MatrMulMatr(DS1_RndMatrWorld,
-    MatrMulMatr(DS1_RndMatrView, DS1_RndMatrProj));
-  glLoadMatrixf(M.A[0]);
+  for (i = 0; i < Obj->NumOfPrims; i++)
+  {
+    /* Build transform matrix */
+    MSave = DS1_RndMatrWorld;
+    DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, Obj->Prims[i].M);
+    M = MatrMulMatr(DS1_RndMatrWorld,
+      MatrMulMatr(DS1_RndMatrView, DS1_RndMatrProj));
+    glLoadMatrixf(M.A[0]);
 
-  glUseProgram(DS1_RndPrg);
+    glUseProgram(DS1_RndPrg);
 
-  /* Setup global variables */
-  if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrWorld")) != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrWorld.A[0]);
-  if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrView")) != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrView.A[0]);
-  if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrProj")) != -1)
-    glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrProj.A[0]);
-  if ((loc = glGetUniformLocation(DS1_RndPrg, "Time")) != -1)
-    glUniform1f(loc, DS1_Anim.Time);
+    /* Setup global variables */
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrWVP")) != -1)
+      glUniformMatrix4fv(loc, 1, FALSE, M.A[0]);
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrWorld")) != -1)
+      glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrWorld.A[0]);
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrView")) != -1)
+      glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrView.A[0]);
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "MatrProj")) != -1)
+      glUniformMatrix4fv(loc, 1, FALSE, DS1_RndMatrProj.A[0]);
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "Time")) != -1)
+      glUniform1f(loc, DS1_Anim.Time);
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "PartNo")) != -1)
+      glUniform1i(loc, i);
 
+    /* Activete primitive vertex array */
+    glBindVertexArray(Obj->Prims[i].VA);
+    /* Activete primitive index buffer */
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Obj->Prims[i].IBuf);
+    /* Draw primitive */
+    glDrawElements(GL_TRIANGLES, Obj->Prims[i].NumOfI, GL_UNSIGNED_INT, NULL);
+    glUseProgram(0);
+    DS1_RndMatrWorld = MSave;
+  }
+} /* End of 'DS1_RndObjDraw' function */
 
-  /* Activete primitive vertex array */
-  glBindVertexArray(Pr->VA);
-  /* Activete primitive index buffer */
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Pr->IBuf);
-  /* Draw primitive */
-  glDrawElements(GL_TRIANGLES, Pr->NumOfI, GL_UNSIGNED_INT, NULL);
-  glUseProgram(0);
-} /* End of 'DS1_RndPrimDraw' function */
-
-/* Primitive free function.
+/* Object free function.
  * ARGUMENTS:
- *   - primtive to free:
- *       ds1PRIM *Pr;
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
  * RETURNS: None.
  */
-VOID DS1_RndPrimFree( ds1PRIM *Pr )
+VOID DS1_RndObjFree( ds1OBJ *Obj )
 {
-  glBindVertexArray(Pr->VA);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &Pr->VBuf);
-  glBindVertexArray(0);
-  glDeleteVertexArrays(1, &Pr->VA);
-  glDeleteBuffers(1, &Pr->IBuf);
-  memset(Pr, 0, sizeof(ds1PRIM));
-} /* End of 'DS1_RndPrimFree' function */
+  INT i;
 
+  for (i = 0; i < Obj->NumOfPrims; i++)
+  {
+    glBindVertexArray(Obj->Prims[i].VA);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(1, &Obj->Prims[i].VBuf);
+    glBindVertexArray(0);
+    glDeleteVertexArrays(1, &Obj->Prims[i].VA);
+    glDeleteBuffers(1, &Obj->Prims[i].IBuf);
+  }
+  free(Obj->Prims);
+  memset(Obj, 0, sizeof(ds1OBJ));
+} /* End of 'DS1_RndObjFree' function */
 
 /* END OF 'RENDER.C' FILE */

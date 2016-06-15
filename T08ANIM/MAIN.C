@@ -78,7 +78,7 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   /*** Add unit samples ***/
   DS1_AnimAddUnit(DS1_UnitCreateControl());
-  DS1_AnimAddUnit(DS1_UnitCreateModel("modela\\btr.g3d"));
+  DS1_AnimAddUnit(DS1_UnitCreateModel("modela\\A380.g3d"));
 
   /* Run message loop */
   while (GetMessage(&msg, NULL, 0, 0))

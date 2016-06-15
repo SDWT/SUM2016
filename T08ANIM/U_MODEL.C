@@ -13,7 +13,7 @@ typedef struct
   ds1UNIT;
   CHAR *FileName;
   VEC Pos;
-  ds1PRIM Pr;
+  ds1OBJ Obj;
 } ds1UNIT_MODEL;
 
 /* Unit model initialization function.
@@ -27,7 +27,7 @@ typedef struct
 static VOID DS1_UnitInit( ds1UNIT_MODEL *Uni, ds1ANIM *Ani )
 {
   Uni->Pos = VecSet(10 * Rnd1(), 10 * Rnd1(), 10 * Rnd1());
-  DS1_RndPrimLoad(&Uni->Pr, Uni->FileName);
+  DS1_RndObjLoad(&Uni->Obj, Uni->FileName);
 } /* End of 'DS1_UnitInit' function */
 
 /* Unit deinitialization function.
@@ -40,7 +40,7 @@ static VOID DS1_UnitInit( ds1UNIT_MODEL *Uni, ds1ANIM *Ani )
  */
 static VOID DS1_UnitClose( ds1UNIT_MODEL *Uni, ds1ANIM *Ani )
 {
-  DS1_RndPrimFree(&Uni->Pr);
+  DS1_RndObjFree(&Uni->Obj);
 } /* End of 'DS1_UnitClose' function */
 
 /* Unit render function.
@@ -53,9 +53,9 @@ static VOID DS1_UnitClose( ds1UNIT_MODEL *Uni, ds1ANIM *Ani )
  */
 static VOID DS1_UnitRender( ds1UNIT_MODEL *Uni, ds1ANIM *Ani )
 {
-  DS1_RndMatrWorld = MatrixScale(0.01, 0.01, 0.01);
+  DS1_RndMatrWorld = MatrMulMatr(MatrixScale(0.01, 0.01, 0.01), MatrRotateX(-90));
   /*MatrMulMatr(MatrixScale(0.01, 0.01, 0.01), MatrixTranslate(Uni->Pos.X, Uni->Pos.Y, Uni->Pos.Z));*/
-  DS1_RndPrimDraw(&Uni->Pr);
+  DS1_RndObjDraw(&Uni->Obj);
 } /* End of 'DS1_UnitRender' function */
 
 /* Unit model creation function.

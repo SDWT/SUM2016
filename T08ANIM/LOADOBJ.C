@@ -9,54 +9,34 @@
 
 #include "anim.h"
 
-/* Load primitive from '*.g3d' file function.
+/* Load object from '*.g3d' file function.
  * ARGUMENTS:
- *   - primitive structure pointer:
- *       ds1PRIM *Pr;
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
  *   - file name:
  *       CHAR *FileName;
  * RETURNS:
  *   (BOOL) TRUE is success, FALSE otherwise.
  */
-BOOL DS1_RndPrimLoad( ds1PRIM *Pr, CHAR *FileName )
+BOOL DS1_RndObjLoad( ds1OBJ *Obj, CHAR *FileName )
 {
   FILE *F;
   DWORD Sign;
   INT NumOfPrimitives;
   CHAR MtlFile[300];
-  INT NumOfP;
+  INT NumOfV;
   INT NumOfI;
   CHAR Mtl[300];
   INT p;
   ds1VERTEX *V;
   INT *I;
 
-  memset(Pr, 0, sizeof(ds1PRIM));
+  memset(Obj, 0, sizeof(ds1OBJ));
 
   F = fopen(FileName, "rb");
   if (F == NULL)
     return FALSE;
 
-  /* File structure:
-   *   4b Signature: "G3D\0"    CHAR Sign[4];
-   *   4b NumOfPrimitives       INT NumOfPrimitives;
-   *   300b material file name: CHAR MtlFile[300];
-   *   repeated NumOfPrimitives times:
-   *     4b INT NumOfP; - vertex count
-   *     4b INT NumOfI; - index (triangles * 3) count
-   *     300b material name: CHAR Mtl[300];
-   *     repeat NumOfP times - vertices:
-   *         !!! float point -> FLT
-   *       typedef struct
-   *       {
-   *         VEC  P;  - Vertex position
-   *         VEC2 T;  - Vertex texture coordinates
-   *         VEC  N;  - Normal at vertex
-   *         VEC4 C;  - Vertex color
-   *       } VERTEX;
-   *     repeat (NumOfF / 3) times - facets (triangles):
-   *       INT N0, N1, N2; - for every triangle (N* - vertex number)
-   */
   fread(&Sign, 4, 1, F);
   if (Sign != *(DWORD *)"G3D")
   {
@@ -65,41 +45,56 @@ BOOL DS1_RndPrimLoad( ds1PRIM *Pr, CHAR *FileName )
   }
   fread(&NumOfPrimitives, 4, 1, F);
   fread(MtlFile, 1, 300, F);
+
+  /* Allocate mnemory for primitives */
+  if ((Obj->Prims = malloc(sizeof(ds1PRIM) * NumOfPrimitives)) == NULL)
+  {
+    fclose(F);
+    return FALSE;
+  }
+  Obj->NumOfPrims = NumOfPrimitives;
+
   for (p = 0; p < NumOfPrimitives; p++)
   {
     /* Read primitive info */
-    fread(&NumOfP, 4, 1, F);
+    fread(&NumOfV, 4, 1, F);
     fread(&NumOfI, 4, 1, F);
     fread(Mtl, 1, 300, F);
 
     /* Allocate memory for primitive */
-    if ((V = malloc(sizeof(ds1VERTEX) * NumOfP)) == NULL)
+    if ((V = malloc(sizeof(ds1VERTEX) * NumOfV + sizeof(INT) * NumOfI)) == NULL)
     {
+      while (p-- > 0)
+      {
+        glBindVertexArray(Obj->Prims[p].VA);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDeleteBuffers(1, &Obj->Prims[p].VBuf);
+        glBindVertexArray(0);
+        glDeleteVertexArrays(1, &Obj->Prims[p].VA);
+        glDeleteBuffers(1, &Obj->Prims[p].IBuf);
+      }
+      free(Obj->Prims);
+      memset(Obj, 0, sizeof(ds1OBJ));
       fclose(F);
       return FALSE;
     }
-    if ((I = malloc(sizeof(INT) * NumOfI)) == NULL)
-    {
-      free(V);
-      V = NULL;
-      fclose(F);
-      return FALSE;
-    }
-    Pr->NumOfI = NumOfI;
-    fread(V, sizeof(ds1VERTEX), NumOfP, F);
+    I = (INT *)(V + NumOfV);
+    Obj->Prims[p].NumOfI = NumOfI;
+    Obj->Prims[p].M = MatrixIdentity();
+    fread(V, sizeof(ds1VERTEX), NumOfV, F);
     fread(I, sizeof(INT), NumOfI, F);
 
     /* Create OpenGL buffers */
-    glGenVertexArrays(1, &Pr->VA);
-    glGenBuffers(1, &Pr->VBuf);
-    glGenBuffers(1, &Pr->IBuf);
+    glGenVertexArrays(1, &Obj->Prims[p].VA);
+    glGenBuffers(1, &Obj->Prims[p].VBuf);
+    glGenBuffers(1, &Obj->Prims[p].IBuf);
 
     /* Activate vertex array */
-    glBindVertexArray(Pr->VA);
+    glBindVertexArray(Obj->Prims[p].VA);
     /* Activate vertex buffer */
-    glBindBuffer(GL_ARRAY_BUFFER, Pr->VBuf);
+    glBindBuffer(GL_ARRAY_BUFFER, Obj->Prims[p].VBuf);
     /* Store vertex data */
-    glBufferData(GL_ARRAY_BUFFER, sizeof(ds1VERTEX) * NumOfP, V, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(ds1VERTEX) * NumOfV, V, GL_STATIC_DRAW);
 
     /* Setup data order */
     /*                    layout,
@@ -124,18 +119,16 @@ BOOL DS1_RndPrimLoad( ds1PRIM *Pr, CHAR *FileName )
     glEnableVertexAttribArray(3);
 
     /* Indices */
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Pr->IBuf);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Obj->Prims[p].IBuf);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(INT) * NumOfI, I, GL_STATIC_DRAW);
 
     /* Disable vertex array */
     glBindVertexArray(0);
 
     free(V);
-    free(I);
-    break;
   }
   fclose(F);
   return TRUE;
-} /* End of 'DS1_RndPrimLoad' function */
+} /* End of 'DS1_RndObjLoad' function */
 
 /* END OF 'LOADOBJ.C' FILE */
