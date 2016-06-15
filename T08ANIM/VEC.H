@@ -17,6 +17,8 @@ typedef double DBL;
 
 /* PI constant */
 #define DS1_PI 3.14159265358979323846
+#define DEGREE2RADIANL 0.01745329251994329576L
+extern DBL MultiplierDegree2Radian;
 
 /* Space vector point representation type */
 typedef struct tagVEC
@@ -409,6 +411,141 @@ __inline MATR MatrixRotate( DBL AngleInDegree, FLT x, FLT y, FLT z )
   return m;
 } /* End of 'MatrixRotate' function */
 
+/* Rotation around X axis transformation matrix setup function.
+ * ARGUMENTS:
+ *   - rotation ange in degrees:
+ *       FLT AngleInDegree;
+ * RETURNS:
+ *   (MATR) result matrix.
+ */
+__inline MATR MatrRotateX( FLT AngleInDegree )
+{
+  FLT sine, cosine;
+  MATR m = MatrixIdentity();
+
+  __asm {
+    /* FST(0) Angle (from degree to radian) */
+    fld  AngleInDegree
+    fmul MultiplierDegree2Radian
+
+    /* FST(0) - cos, FST(1) - sin */
+    fsincos
+
+    fstp cosine /* cos -> cosine */
+    fstp sine   /* sin -> sine */
+  }
+  m.A[1][1] = cosine;
+  m.A[2][2] = cosine;
+  m.A[1][2] = sine;
+  m.A[2][1] = -sine;
+  return m;
+} /* End of 'MatrRotateX' function */
+
+/* Rotation around Y axis transformation matrix setup function.
+ * ARGUMENTS:
+ *   - rotation ange in degrees:
+ *       FLT AngleInDegree;
+ * RETURNS:
+ *   (MATR) result matrix.
+ */
+__inline MATR MatrRotateY( FLT AngleInDegree )
+{
+  FLT sine, cosine;
+  MATR m = MatrixIdentity();
+
+  __asm {
+    /* FST(0) Angle (from degree to radian) */
+    fld  AngleInDegree
+    fmul MultiplierDegree2Radian
+
+    /* FST(0) - cos, FST(1) - sin */
+    fsincos
+
+    fstp cosine /* cos -> cosine */
+    fstp sine   /* sin -> sine */
+  }
+  m.A[0][0] = cosine;
+  m.A[2][2] = cosine;
+  m.A[2][0] = sine;
+  m.A[0][2] = -sine;
+  return m;
+} /* End of 'MatrRotateY' function */
+
+/* Rotation around Z axis transformation matrix setup function.
+ * ARGUMENTS:
+ *   - rotation ange in degrees:
+ *       FLT AngleInDegree;
+ * RETURNS:
+ *   (MATR) result matrix.
+ */
+__inline MATR MatrRotateZ( FLT AngleInDegree )
+{
+  FLT sine, cosine;
+  MATR m = MatrixIdentity();
+
+  __asm {
+    /* FST(0) Angle (from degree to radian) */
+    fld  AngleInDegree
+    fmul MultiplierDegree2Radian
+
+    /* FST(0) - cos, FST(1) - sin */
+    fsincos
+
+    fstp cosine /* cos -> cosine */
+    fstp sine   /* sin -> sine */
+  }
+  m.A[0][0] = cosine;
+  m.A[1][1] = cosine;
+  m.A[0][1] = sine;
+  m.A[1][0] = -sine;
+  return m;
+} /* End of 'MatrRotateZ' function */
+
+/* Rotation around arbitrary radius-vector transformation matrix setup function.
+ * ARGUMENTS:
+ *   - rotation ange in degrees:
+ *       FLT AngleInDegree;
+ *   - vector rotate around:
+ *       VEC R;
+ * RETURNS:
+ *   (MATR) result matrix.
+ */
+__inline MATR MatrRotate( FLT AngleInDegree, VEC R )
+{
+  FLT sine, cosine;
+  MATR m;
+
+  __asm {
+    /* FST(0) Angle (from degree to radian) */
+    fld  AngleInDegree
+    fmul MultiplierDegree2Radian
+
+    /* FST(0) - cos, FST(1) - sin */
+    fsincos
+
+    fstp cosine /* cos -> cosine */
+    fstp sine   /* sin -> sine */
+  }
+  R = VecNormalize(R);
+  m.A[0][0] = cosine + R.X * R.X * (1 - cosine);
+  m.A[0][1] = R.X * R.Y * (1 - cosine) - R.Z * sine;
+  m.A[0][2] = R.X * R.Z * (1 - cosine) + R.Y * sine;
+  m.A[0][3] = 0;
+  m.A[1][0] = R.Y * R.X * (1 - cosine) + R.Z * sine;
+  m.A[1][1] = cosine + R.Y * R.Y * (1 - cosine);
+  m.A[1][2] = R.Y * R.Z * (1 - cosine) - R.X * sine;
+  m.A[1][3] = 0;
+  m.A[2][0] = R.Z * R.X * (1 - cosine) - R.Y * sine;
+  m.A[2][1] = R.Z * R.Y * (1 - cosine) + R.X * sine;
+  m.A[2][2] = cosine + R.Z * R.Z * (1 - cosine);
+  m.A[2][3] = 0;
+  m.A[3][0] = 0;
+  m.A[3][1] = 0;
+  m.A[3][2] = 0;
+  m.A[3][3] = 1;
+  return m;
+} /* End of 'MatrRotate' function */
+
 /* Mull of two matrixs function.
  * ARGUMENTS:
  *   - matrixs to be mull:
@@ -591,6 +728,21 @@ return Vres;
 
 } /* End of 'PointTransform' function */
 
+/* Vector by matrix multiplication (without projection) function.
+ * ARGUMENTS:
+ *   - source vector:
+ *       VEC V;
+ *   - multiple matrix:
+ *       MATR M;
+ * RETURNS:
+ *   (VEC) result vector.
+ */
+__inline VEC VecTransform43( VEC V, MATR M )
+{
+  return VecSet(V.X * M.A[0][0] + V.Y * M.A[1][0] + V.Z * M.A[2][0] + M.A[3][0],
+                V.X * M.A[0][1] + V.Y * M.A[1][1] + V.Z * M.A[2][1] + M.A[3][1],
+                V.X * M.A[0][2] + V.Y * M.A[1][2] + V.Z * M.A[2][2] + M.A[3][2]);
+} /* End of 'VecTransform43' function */
 
 /* Transform Normal function.
  * ARGUMENTS:

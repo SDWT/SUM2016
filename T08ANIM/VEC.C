@@ -6,6 +6,9 @@
 
 #include "vec.h"
 
+/* Multiplier for degree to radian conversions */
+DBL MultiplierDegree2Radian = DEGREE2RADIANL;
+
 /*
  *
  */

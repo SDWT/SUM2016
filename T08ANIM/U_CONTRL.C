@@ -11,8 +11,7 @@
 typedef struct
 {
   ds1UNIT;
-  INT X, Y;
-  CHAR FileAND[100], FileXOR[100];
+  VEC Pos;
 } ds1UNIT_CONTROL;
 
 /* Global system info on display */
@@ -28,6 +27,7 @@ BOOL DS1_IsSysInfo = 0, DS1_IsKeyInfo = 0;
  */
 static VOID DS1_UnitInit( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
 {
+  Uni->Pos = VecSet(10, 0, 10);
 
 } /* End of 'DS1_UnitInit' function */
 
@@ -35,31 +35,10 @@ static VOID DS1_UnitResponse( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
 {
   /*CHAR StrBuf[200];*/
   FLT x = 0, y = 0, z = 0;
+  DBL r;
   static FLT jx = 0, jy = 0, jz = 0;
-  static VEC tr = {0, 0, 3};
-  /*
-  if (DS1_IsSysInfo)
-  {
-    SetBkMode(Ani->hDC, TRANSPARENT);
-    TextOut(Ani->hDC, 0, 0, StrBuf, sprintf(StrBuf, "Input info: "
-      "Mx: %6d; Mdx: %6d; My: %6d; Mdy: %6d; Mz: %6d; Mdz: %6d; "
-      "Jx: %5.3lf; Jy: %5.3lf; Jz: %5.3lf; Jr: %5.3lf; JPov: %2d.", 
-      Ani->Mx, Ani->Mdx, Ani->My, Ani->Mdy, Ani->Mz, Ani->Mdz,
-      Ani->JX, Ani->JY, Ani->JZ, Ani->JR, Ani->JPov));
-    SetBkMode(Ani->hDC, OPAQUE);
-  }
-  if (DS1_IsKeyInfo)
-  {
-    INT j;
-    SetBkMode(Ani->hDC, TRANSPARENT);
-    for (j = 0; j < 256; j++)
-    {
-      sprintf(StrBuf, "KeyNum: %d - %d;", j, Ani->Keys[j]);
-      TextOut(Ani->hDC, 120 * (j / 20), 100 + (j * 10 + 10) % 200, StrBuf, strlen(StrBuf));
-    }
-    SetBkMode(Ani->hDC, OPAQUE);
-  }
-  */
+  static VEC tr = {0, 0, 3}, at = {0, 0, 0}, up1 = {0, 1, 0};
+
   if (Ani->Keys[VK_MENU] && Ani->KeysClick[VK_RETURN])
     DS1_FlipFullScreen();
   if (Ani->KeysClick[VK_ESCAPE])
@@ -71,22 +50,38 @@ static VOID DS1_UnitResponse( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
   if (Ani->KeysClick['p'])
     Ani->IsPause = !Ani->IsPause;
 
-
   if (Ani->JPov == 1 || Ani->JPov == 2 || Ani->JPov == 8)
     z = -1;
+  else if (Ani->JPov == 4 || Ani->JPov == 5 || Ani->JPov == 6)
+    z = 1;
   if (Ani->JPov == 3 || Ani->JPov == 2 || Ani->JPov == 4)
     x = 1;
-  if (Ani->JPov == 4 || Ani->JPov == 5 || Ani->JPov == 6)
-    z = 1;
-  if (Ani->JPov == 7 || Ani->JPov == 8 || Ani->JPov == 6)  
+  else if (Ani->JPov == 7 || Ani->JPov == 8 || Ani->JPov == 6)
     x = -1;
-  tr = VecAddVec(tr, VecSet(x, y, z));
   jx = Ani->JX;
   jy = Ani->JY;
   /*MatrixTranslate(Ani->JX, Ani->JY, Ani->JZ);*/
-  DS1_RndMatrView = MatrView(tr, VecSet(0, 0, 0), VecSet(0, 1, 0));
+  /*DS1_RndMatrView = MatrView(tr, VecSet(0, 0, 0), VecSet(0, 1, 0));*/
   /*DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrMulMatr(, MatrixRotateX(jy)));*/
   
+  Uni->Pos = VecAddVec(Uni->Pos, VecSet(x, y, z));
+  /* Uni->Pos.Y += Ani->JY * Ani->GlobalDeltaTime; */
+  Uni->Pos = VecTransform43(Uni->Pos, MatrRotateX(59 * Ani->JY * Ani->GlobalDeltaTime));
+  Uni->Pos = VecTransform43(Uni->Pos, MatrRotateY(59 * Ani->JX * Ani->GlobalDeltaTime));
+
+  if (Ani->Keys[VK_LBUTTON])
+  {
+    Uni->Pos = VecTransform43(Uni->Pos, MatrRotateY(59 * Ani->Mdx * Ani->GlobalDeltaTime));
+    Uni->Pos = VecTransform43(Uni->Pos, MatrRotate(59 * Ani->Mdy * Ani->GlobalDeltaTime, VecNormalize(VecCrossVec(VecNormalize(VecSubVec(at, Uni->Pos)), up1))));
+  }
+
+  Uni->Pos = VecTransform43(Uni->Pos, MatrRotateY(59 * Ani->Keys[VK_RIGHT] * Ani->GlobalDeltaTime));
+  Uni->Pos = VecTransform43(Uni->Pos, MatrRotateY(-59 * Ani->Keys[VK_LEFT] * Ani->GlobalDeltaTime));
+
+  r = VecLen(Uni->Pos);
+  Uni->Pos = VecMullNum(Uni->Pos, (r + -Ani->Mdz * Ani->DeltaTime) / r);
+
+  DS1_RndMatrView = MatrView(Uni->Pos, at, up1);
 
 } /* End of 'DS1_ControlModule' function */
 
@@ -112,12 +107,6 @@ static VOID DS1_UnitClose( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
  */
 static VOID DS1_UnitRender( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
 {
-  static INT X = 0, Y = 0;
-
-  X += 3 * (INT)Ani->JZ;
-  Y += 3 * (INT)Ani->JR;
-  if (Ani->KeysClick['0'])
-    Y = X = 0;
 
 } /* End of 'DS1_UnitRender' function */
 
@@ -133,6 +122,7 @@ ds1UNIT * DS1_UnitCreateControl( VOID )
   if ((Uni = (ds1UNIT_CONTROL *)DS1_AnimUnitCreate(sizeof(ds1UNIT_CONTROL))) == NULL)
     return NULL;
   /* Setup unit methods */
+  Uni->Init = (VOID *)DS1_UnitInit;
   Uni->Response = (VOID *)DS1_UnitResponse;
   return (ds1UNIT *)Uni;
 } /* End of 'DS1_UnitCreateControl' function */

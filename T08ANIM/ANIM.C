@@ -115,7 +115,6 @@ VOID DS1_AnimClose( VOID )
   wglMakeCurrent(NULL, NULL);
   wglDeleteContext(DS1_Anim.hGLRC);
   ReleaseDC(DS1_Anim.hWnd, DS1_Anim.hDC);
-
 } /* End of 'DS1_ANIMClose' function */
 
 /* Animation system resize function.
@@ -249,6 +248,7 @@ VOID DS1_AnimRender( VOID )
     DS1_Anim.Units[i]->Render(DS1_Anim.Units[i], &DS1_Anim);
   }
 
+  glLoadMatrixf(DS1_RndMatrView.A[0]);
   /* Finalize OpenGL drawing */
   glFinish();
 

@@ -77,13 +77,9 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
   UpdateWindow(hWnd);
 
   /*** Add unit samples ***/
-  /*LoadSphere();
-  DS1_AnimAddUnit(DS1_UnitCreateGlobe(1600 / 4, 800 / 2, (2400) / 10));
-  DS1_AnimAddUnit(DS1_UnitCreateGlobe(3 * 1600 / 4, 800 / 2, (2400) / 10));*/
   DS1_AnimAddUnit(DS1_UnitCreateCube());
   DS1_AnimAddUnit(DS1_UnitCreateControl());
-  /*DS1_AnimAddUnit(DS1_UnitCreateSprite(-70, -80, "SDAND.BMP", "SDXOR.BMP"));*/
-  
+
   /* Run message loop */
   while (GetMessage(&msg, NULL, 0, 0))
     DispatchMessage(&msg);
@@ -127,9 +123,9 @@ LRESULT CALLBACK MyWinFunc( HWND hWnd, UINT Msg,
       GetSystemMetrics(SM_CYBORDER) * 2;
     return 0;
   case WM_CREATE:
-    SetTimer(hWnd, 30, 10, NULL);
     /* Animation initialization */
     DS1_AnimInit(hWnd);
+    SetTimer(hWnd, 30, 10, NULL);
     SendMessage(hWnd, WM_SIZE, 0, 0);
     return 0;
   case WM_SIZE:
