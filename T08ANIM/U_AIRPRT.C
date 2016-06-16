@@ -21,6 +21,7 @@ static VOID DS1_UnitInit( ds1UNIT_PORT *Uni, ds1ANIM *Ani )
 {
   Uni->Port.Pos = VecSet(10 * Rnd1(), 10 * Rnd1(), 10 * Rnd1());
   DS1_RndObjLoad(&Uni->Port.Obj, Uni->Port.FileName);
+  DS1_Scale = 0.5;
 } /* End of 'DS1_UnitInit' function */
 
 /* Unit deinitialization function.
@@ -46,8 +47,7 @@ static VOID DS1_UnitClose( ds1UNIT_PORT *Uni, ds1ANIM *Ani )
  */
 static VOID DS1_UnitRender( ds1UNIT_PORT *Uni, ds1ANIM *Ani )
 {
-  FLT size = 0.5;
-  DS1_RndMatrWorld = MatrMulMatr(MatrixScale(size, size, size), MatrixTranslate(-10, 0, 10));
+  DS1_RndMatrWorld = MatrixScale(DS1_Scale, DS1_Scale, DS1_Scale);
   /*MatrMulMatr(MatrixScale(0.01, 0.01, 0.01), MatrixTranslate(Uni->Pos.X, Uni->Pos.Y, Uni->Pos.Z));*/
   DS1_RndObjDraw(&Uni->Port.Obj);
 } /* End of 'DS1_UnitRender' function */

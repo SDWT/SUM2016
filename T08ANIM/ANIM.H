@@ -92,6 +92,7 @@ extern ds1ANIM DS1_Anim;
 extern INT DS1_MouseWheel;
 
 extern INT DS1_IsNor, DS1_IsPart;
+
 extern FLT DS1_Scale;
 
 

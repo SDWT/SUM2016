@@ -86,7 +86,8 @@ static VOID DS1_UnitResponse( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
   Uni->Pos = VecAddVec(Uni->Pos, VecSet(x, y, z));
   /* Uni->Pos.Y += Ani->JY * Ani->GlobalDeltaTime; */
   Uni->Pos = VecTransform43(Uni->Pos, MatrRotateX(59 * Ani->JY * Ani->GlobalDeltaTime));
-  Uni->Pos = VecTransform43(Uni->Pos, MatrRotateY(59 * Ani->JX * Ani->GlobalDeltaTime));
+  Uni->Pos = VecTransform43(Uni->Pos, MatrRotate(59 * Ani->JX * Ani->GlobalDeltaTime,
+                 VecNormalize(VecCrossVec(VecNormalize(VecSubVec(Zero, Uni->Pos)), up1))));
 
   if (Ani->Keys[VK_LBUTTON])
   {
