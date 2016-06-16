@@ -12,6 +12,9 @@ MATR DS1_RndMatrWorld,
 DBL DS1_RndProjSize = 1, DS1_RndProjDist = 1, DS1_RndFarClip = 1000;
 UINT DS1_RndPrg = 0;
 
+INT DS1_IsNor = 1, DS1_IsPart = 0;
+FLT DS1_Scale = 1;
+
 /* Setup projection function.
  * ARGUMENTS: None.
  * RETURNS: None.
@@ -70,6 +73,10 @@ VOID DS1_RndObjDraw( ds1OBJ *Obj )
       glUniform1f(loc, DS1_Anim.Time);
     if ((loc = glGetUniformLocation(DS1_RndPrg, "PartNo")) != -1)
       glUniform1i(loc, i);
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "IsNor")) != -1)
+      glUniform1i(loc, DS1_IsNor);
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "IsPart")) != -1)
+      glUniform1i(loc, DS1_IsPart);
 
     /* Activete primitive vertex array */
     glBindVertexArray(Obj->Prims[i].VA);

@@ -224,11 +224,27 @@
 				Name="Unit samples"
 				>
 				<File
+					RelativePath=".\U_AIRPLN.C"
+					>
+				</File>
+				<File
+					RelativePath=".\U_AIRPRT.C"
+					>
+				</File>
+				<File
 					RelativePath=".\U_CONTRL.C"
 					>
 				</File>
 				<File
 					RelativePath=".\U_MODEL.C"
+					>
+				</File>
+				<File
+					RelativePath=".\U_SCENE.C"
+					>
+				</File>
+				<File
+					RelativePath=".\U_SCENE.H"
 					>
 				</File>
 				<File

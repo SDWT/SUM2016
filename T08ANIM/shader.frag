@@ -6,6 +6,8 @@ layout(location = 0) out vec4 OutColor;
 
 uniform float Time;
 uniform int PartNo;
+uniform int IsNor;
+uniform int IsPart;
  
 // input data (from vertex shader)
 in vec4 DrawColor;
@@ -14,6 +16,7 @@ in vec3 DrawNormal;
 
 void main( void )
 {
+  int i = PartNo;
   /*
   if (DrawPos.z > 33.5 + 35 * sin(5 * Time))
     //discard;
@@ -26,45 +29,52 @@ void main( void )
   float nl = max(dot(L, normalize(DrawNormal)), 0);
   vec4 DrColor = DrawColor;
 
-  //left and right shassi
-  if (PartNo == 1 || PartNo == 3)
-    DrColor = vec4(1, 0, 0, 1);
-  //left and right shassi door
-  if (PartNo == 2 || PartNo == 4 || PartNo == 2)
-    DrColor = vec4(1, 1, 0, 1);
-  //forward wheel(0) and shassi(5)
-  if (PartNo == 0 || PartNo == 5)
-    DrColor = vec4(0, 0, 1, 1);
-  //?
-  if (PartNo == 6)
-    DrColor = vec4(1, 1, 1, 0.5);
-  // engine and main corpus 
-  if (PartNo == 11)
-    DrColor = vec4(1, 1, 0, 1);
-  // Tail vertical
-  if (PartNo == 8 || PartNo == 10 || PartNo == 7)
-    DrColor = vec4(0, 0, 1, 1);
-  // Wings 
-  if (PartNo == 12)
-    DrColor = vec4(1, 0, 1, 1);
+  while (i >= 20)
+    i -= 20;
 
-  // Engines vints 
-  if (PartNo == 13 || PartNo == 14)
+  if (i == 0)
+    DrColor = vec4(0, 0, 0, 1);
+  else if (i == 1)
+    DrColor = vec4(1, 1, 1, 1);
+  else if (i == 2)
+    DrColor = vec4(1, 0, 0, 1);
+  else if (i == 3)
+    DrColor = vec4(0, 1, 0, 1);
+  else if (i == 4)
+    DrColor = vec4(0, 0, 1, 1);
+  else if (i == 5)
+    DrColor = vec4(1, 1, 0, 1);
+  else if (i == 6)
     DrColor = vec4(0, 1, 1, 1);
-  // engine forward corpus  
-  if (PartNo == 15)
-    DrColor = vec4(0, 0, 1, 1);
-  // engine axes, windows, Tail horizontal
-  if (PartNo == 16)
-    DrColor = vec4(1, 0, 0, 1);
-  // engine tail
-  if (PartNo == 17)
-    DrColor = vec4(0.3, 0.5, 0.7, 1);
-
-  //?
-  if (PartNo == 9)
+  else if (i == 7)
+    DrColor = vec4(1, 0, 1, 1);
+  else if (i == 8)
+    DrColor = vec4(0.5, 0.5, 0.5, 1);
+  else if (i == 9)
+    DrColor = vec4(0.5, 0, 0, 1);
+  else if (i == 10)
+    DrColor = vec4(0, 0.5, 0, 1);
+  else if (i == 11)
+    DrColor = vec4(0, 0, 0.5, 1);
+  else if (i == 12)
     DrColor = vec4(0.5, 0.5, 0, 1);
+  else if (i == 13)
+    DrColor = vec4(0, 0.5, 0.5, 1);
+  else if (i == 14)
+    DrColor = vec4(0.5, 0, 0.5, 1);
+  else if (i == 15)
+    DrColor = vec4(0.7, 0.7, 0.7, 1);
+  else if (i == 16)
+    DrColor = vec4(0.7, 0, 0, 1);
+  else if (i == 17)
+    DrColor = vec4(0, 0.7, 0, 1);
+  else if (i == 18)
+    DrColor = vec4(0, 0, 0.7, 1);
+  else if (i == 19)
+    DrColor = vec4(0.7, 0.7, 0, 1);
 
+  if (IsNor == 0)
+    nl = 1;
   /* 
   if (PartNo != 9 || PartNo != 7 || PartNo != 10 || PartNo != 18)
     return;

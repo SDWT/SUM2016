@@ -41,7 +41,6 @@ typedef struct
        JBut[32];                   /* Joystick button state */
   INT JPov;                        /* Joystick point-of-view control [0,1..8] */
   DBL JX, JY, JZ, JR;              /* Joystick axes */
-
 } ds1ANIM;
 
 struct tagds1UNIT
@@ -91,6 +90,10 @@ extern ds1ANIM DS1_Anim;
 
 /* Global mouse wheel delta value */
 extern INT DS1_MouseWheel;
+
+extern INT DS1_IsNor, DS1_IsPart;
+extern FLT DS1_Scale;
+
 
 /* Animation initialization function.
  * ARGUMENTS:
