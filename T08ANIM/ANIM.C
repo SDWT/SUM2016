@@ -18,7 +18,8 @@
 #define DS1_GET_JOYSTICK_AXIS(A) \
   (2.0 * (ji.dw##A##pos - jc.w##A##min) / (jc.w##A##max - jc.w##A##min - 1) - 1)
 
-#define DS1_SHADER_NAME "shader"
+#define DS1_SHADER_NAME_1 "shader"
+#define DS1_SHADER_NAME_2 "shader2"
 
 /* Timer local data */
 static UINT64
@@ -94,8 +95,11 @@ VOID DS1_AnimInit( HWND hWnd )
   RGB(100, 200, 150)
   glClearColor(0.3, 0.5, 0.7, 1);
   */
+  DS1_Anim.ShNo = 1;
   glEnable(GL_DEPTH_TEST);
-  DS1_RndPrg = DS1_RndShaderLoad(DS1_SHADER_NAME);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  DS1_RndPrg = DS1_RndShaderLoad( (DS1_Anim.ShNo == 1) ? DS1_SHADER_NAME_1 : DS1_SHADER_NAME_2);
   /* glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); */
 } /* End of 'DS1_ANIMInit' function */
 
@@ -243,7 +247,7 @@ VOID DS1_AnimRender( VOID )
   {
     ShaderTime = 0;
     DS1_RndShaderFree(DS1_RndPrg);
-    DS1_RndPrg = DS1_RndShaderLoad(DS1_SHADER_NAME);
+    DS1_RndPrg = DS1_RndShaderLoad((DS1_Anim.ShNo == 1) ? DS1_SHADER_NAME_1 : DS1_SHADER_NAME_2);
   }
   ShaderTime += DS1_Anim.GlobalDeltaTime;
 

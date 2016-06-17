@@ -18,6 +18,16 @@ typedef struct
   ds1COLOR C;  /* Vertex color */
 } ds1VERTEX;
 
+/* Material representation type */
+typedef struct
+{
+  CHAR Name[300]; /* Material name */
+  VEC Ka, Kd, Ks; /* Illumination coefficients */
+  FLT Ph, Trans;  /* Shininess and Phong, transparency */
+  INT TexW, TexH; /* Textiure image size */
+  INT TexNo;      /* For load: bytes per pixel, in use: OpenGL texture no */
+} ds1MTL;
+
 /* Primitive representation type */
 typedef struct
 {
@@ -28,6 +38,7 @@ typedef struct
     IBuf; /* Index buffer */
   INT NumOfI;       /* Facets index array size */
   MATR M; /* Primitive transformation matrix */
+  INT MtlNo; /* Material number */
 } ds1PRIM;
 
 /* Object representation type */
@@ -37,10 +48,14 @@ typedef struct
   INT NumOfPrims;
 } ds1OBJ;
 
-
 extern MATR DS1_RndMatrWorld, DS1_RndMatrView, DS1_RndMatrProj;
 extern DBL DS1_RndProjSize, DS1_RndProjDist, DS1_RndFarClip;
 extern UINT DS1_RndPrg;
+
+/* Materials array */
+#define DS1_MAX_MATERIALS 10000
+extern ds1MTL DS1_RndMaterials[DS1_MAX_MATERIALS];
+extern INT DS1_RndNumOfMaterials;
 
 /* Setup projection function.
  * ARGUMENTS: None.
@@ -103,6 +118,22 @@ VOID DS1_RndShaderFree( UINT Prg );
  */
 UINT DS1_RndShaderLoad( CHAR *FileNamePrefix );
 
+/* Material find by name function.
+ * ARGUMENTS:
+ *   - material name:
+ *       CHAR *Name;
+ * RETURNS:
+ *   (INT) number of found material or -1 if no result.
+ */
+INT DS1_RndFindMaterial( CHAR *Name );
+
+/* Material load function.
+ * ARGUMENTS:
+ *   - material file name:
+ *       CHAR *FileName;
+ * RETURNS: None.
+*/
+VOID DS1_RndLoadMaterials( CHAR *FileName );
 
 
 #endif /* __RENDER_H_ */

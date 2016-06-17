@@ -63,6 +63,12 @@ static VOID DS1_UnitResponse( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
   if (Ani->KeysClick[VK_F6])
     DS1_Scale *= 10;
 
+  if (Ani->KeysClick['1'])
+    Ani->ShNo = 1;
+  if (Ani->KeysClick['2'])
+    Ani->ShNo = 2;
+
+
   if (Ani->KeysClick['R'])
   {
     DS1_RndShaderFree(DS1_RndPrg);

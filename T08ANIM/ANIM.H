@@ -41,6 +41,8 @@ typedef struct
        JBut[32];                   /* Joystick button state */
   INT JPov;                        /* Joystick point-of-view control [0,1..8] */
   DBL JX, JY, JZ, JR;              /* Joystick axes */
+
+  INT ShNo;                        /*  */
 } ds1ANIM;
 
 struct tagds1UNIT
