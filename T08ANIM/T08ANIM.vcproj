@@ -200,6 +200,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\GRID.C"
+					>
+				</File>
+				<File
+					RelativePath=".\GRID.H"
+					>
+				</File>
+				<File
 					RelativePath=".\LOADOBJ.C"
 					>
 				</File>

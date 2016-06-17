@@ -10,6 +10,7 @@
 #include "def.h"
 #include "image.h"
 #include "render.h"
+#include "grid.h"
 
 #define DS1_MAX_UNITS 100
 

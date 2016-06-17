@@ -34,12 +34,12 @@ typedef struct
 /* Port Unit */
 typedef struct
 {
-  CHAR *FileName;
+  CHAR *FileNameObj, *FileNameRWI, *FileNameRWT, *FileNameRWO;
   VEC Pos;     /* Position airport */
   ds1OBJ Obj;  /* Airport object */
-               /* Runway in */
-               /* Runway out */
-               /* Runway taxi */
+  ds1OBJ RWI;  /* Runway in */
+  ds1OBJ RWT;  /* Runway out */
+  ds1OBJ RWO;  /* Runway taxi */
 } ds1PORT;
 
 typedef struct

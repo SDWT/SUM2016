@@ -63,6 +63,20 @@ __inline VEC VecSet( FLT X, FLT Y, FLT Z )
   return r;
 } /* End of 'VecSet' function */
 
+/* Setup plane vector coordinates function.
+ * ARGUMENTS:
+ *   - vector coordinates:
+ *       FLT X, Y;
+ * RETURNS:
+ *   (VEC) result vector.
+ */
+__inline VEC2 Vec2Set( FLT X, FLT Y)
+{
+  VEC2 r;
+  r.X = X, r.Y = Y;
+  return r;
+} /* End of 'Vec2Set' function */
+
 /* Setup vector coordinates function.
  * ARGUMENTS:
  *   - vector coordinates:

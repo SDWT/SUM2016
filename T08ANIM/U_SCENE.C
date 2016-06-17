@@ -32,8 +32,9 @@ typedef struct
 static VOID DS1_UnitInit( ds1UNIT_SCENE *Uni, ds1ANIM *Ani )
 {
   /*Uni->Pos = VecSet(10 * Rnd1(), 10 * Rnd1(), 10 * Rnd1());*/
-  /*DS1_AnimAddUnit(Uni->Port = DS1_UnitCreatePort("IL76.g3d"));*/
-  DS1_AnimAddUnit(Uni->Planes[0] = DS1_UnitCreatePlane("modela\\A380.g3d"));
+  DS1_AnimAddUnit(Uni->Port = DS1_UnitCreatePort("IL76.g3d", "modela\\quad.g3d", "modela\\quad.g3d", "modela\\quad.g3d"));
+
+  /*DS1_AnimAddUnit(Uni->Planes[0] = DS1_UnitCreatePlane("modela\\quad.g3d"));*/
   /*Uni->Planes[0]->Plane.Pos = VecSet(0, 7, 0);*/
 
   /*DS1_RndObjLoad(&Uni->Obj, Uni->FileName);*/

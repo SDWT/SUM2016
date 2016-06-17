@@ -78,8 +78,8 @@ INT WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   /*** Add unit samples ***/
   DS1_AnimAddUnit(DS1_UnitCreateControl());
-  /*DS1_AnimAddUnit(DS1_UnitCreateModel("modela\\radar.g3d"));*/
   DS1_AnimAddUnit(DS1_UnitCreateScene());
+  /*DS1_AnimAddUnit(DS1_UnitCreateModel("modela\\radar.g3d"));*/
 
   /* Run message loop */
   while (GetMessage(&msg, NULL, 0, 0))

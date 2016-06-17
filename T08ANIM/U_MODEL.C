@@ -26,8 +26,12 @@ typedef struct
  */
 static VOID DS1_UnitInit( ds1UNIT_MODEL *Uni, ds1ANIM *Ani )
 {
+  ds1GRID G;
   Uni->Pos = VecSet(10 * Rnd1(), 10 * Rnd1(), 10 * Rnd1());
-  DS1_RndObjLoad(&Uni->Obj, Uni->FileName);
+  /*DS1_RndObjLoad(&Uni->Obj, Uni->FileName);*/
+  /*DS1_GridCreatePlane(&G, 5, 10, VecSet(1, 1, 0), VecSet(0, 1, 1));
+  DS1_GridCreateObj(&G, &Uni->Obj, -1);
+  DS1_GridFree(&G);*/
 } /* End of 'DS1_UnitInit' function */
 
 /* Unit deinitialization function.

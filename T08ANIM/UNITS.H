@@ -28,11 +28,17 @@ ds1UNIT * DS1_UnitCreateControl( VOID );
 /* Unit port creation function.
  * ARGUMENTS: 
  *   - Port file:
- *     CHAR *FileName;
+ *     CHAR *FileNameObj; 
+ *   - Runway landing file:
+ *     CHAR *FileNameRWI;
+ *   - Runway taxi file:
+ *     CHAR *FileNameRWT;
+ *   - Runway takeoff file:
+ *     CHAR *FileNameRWO;
  * RETURNS:
  *   (ds1UNIT *) pointer to created unit.
  */
-ds1UNIT * DS1_UnitCreatePort( CHAR *FileName );
+ds1UNIT * DS1_UnitCreatePort( CHAR *FileNameObj, CHAR *FileNameRWI, CHAR *FileNameRWT, CHAR *FileNameRWO );
 
 /* Unit plane creation function.
  * ARGUMENTS: 
