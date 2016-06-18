@@ -224,7 +224,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="Specials"
+					Name="Animation types"
 					>
 					<File
 						RelativePath=".\GRID.C"

@@ -56,7 +56,7 @@ BOOL DS1_GridCreateSphere( ds1GRID *G, INT N, INT M, INT R );
  * RETURNS: 
  *   (BOOL) TRUE is success, FALSE otherwise.
  */
-BOOL DS1_GridCreateObj( ds1GRID *G, ds1OBJ *Obj, INT MtlNumber );
+BOOL DS1_Grid2Prim( ds1GRID *G, ds1PRIM *Pr );
 
 /* Free grid function.
  * ARGUMENTS:

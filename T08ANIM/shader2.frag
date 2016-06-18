@@ -5,7 +5,7 @@
 layout(location = 0) out vec4 OutColor;
 
 uniform float Time;
-uniform int PartNo;
+uniform int Id;
 uniform int IsNor;
 uniform int IsPart;
  
@@ -16,7 +16,7 @@ in vec3 DrawNormal;
 
 void main( void )
 {
-  int i = PartNo;
+  int i = Id;
   /*
   if (DrawPos.z > 33.5 + 35 * sin(5 * Time))
     //discard;

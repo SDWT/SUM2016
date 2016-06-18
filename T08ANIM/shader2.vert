@@ -12,7 +12,7 @@ uniform mat4 MatrWVP;
 uniform mat4 MatrWorld;
 uniform mat4 MatrView;
 uniform mat4 MatrProj;
-uniform int PartNo;
+uniform int Id;
 uniform int IsPart;
 
 // output data
@@ -22,7 +22,7 @@ out vec3 DrawNormal;
 
 void main( void )
 {
-  vec3 Tun = PartNo * vec3(10000, 0, 0);
+  vec3 Tun = Id * vec3(10000, 0, 0);
 
   if (IsPart == 0)
     Tun = vec3(0, 0, 0);

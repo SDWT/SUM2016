@@ -54,7 +54,7 @@ static VOID DS1_UnitRender( ds1UNIT_PLANE *Uni, ds1ANIM *Ani )
   Dir = Dir;
   /*Uni->Plane.Obj.Prims[8].M = ;*/
   DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrRotateZ(DS1_AIRPLN_ANGLE * 10));
-  DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrixTranslate(0, 0, -DS1_AIRPLN_SPEED));
+  Uni->Plane.Pos = PointTransform4(Uni->Plane.Pos, MatrMulMatr(MatrRotateY(DS1_AIRPLN_ANGLE * 10), MatrixTranslate(0, 0, -DS1_AIRPLN_SPEED)));
 
   DS1_RndMatrWorld = MatrMulMatr(MatrMulMatr(DS1_RndMatrWorld, MatrixScale(DS1_Scale, DS1_Scale, DS1_Scale)), MatrRotateX(-90));
   DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrixTranslate(Uni->Plane.Pos.X, Uni->Plane.Pos.Y, Uni->Plane.Pos.Z));

@@ -6,32 +6,50 @@
 
 #include "anim.h"
 
-/* function
- * 
+/* Object create function.
+ * ARGUMENTS:
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
+ * RETURNS: None.
  */
-VOID DS1_ObjCreate( ds1OBJ *Obj )
+VOID DS1_RndObjCreate( ds1OBJ *Obj )
 {
-}/* End of 'DS1_PrimDraw' function */
+  memset(Obj, 0, sizeof(ds1OBJ));
+  Obj->M = MatrixIdentity();
+} /* End of 'DS1_RndObjCreate' function */
 
-/* function
- * 
+/* Object draw function.
+ * ARGUMENTS:
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
+ * RETURNS: None.
  */
-VOID DS1_ObjFree( ds1OBJ *Obj )
+VOID DS1_RndObjDraw( ds1OBJ *Obj )
 {
-}/* End of 'DS1_PrimDraw' function */
-
-
-/* function
- * 
- */
-VOID DS1_ObjDraw( ds1OBJ *Obj )
-{
+  INT i;
   MATR MSave;
 
   MSave = DS1_RndMatrWorld;
-
-
+  DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, Obj->M);
+  for (i = 0; i < Obj->NumOfPrims; i++)
+    DS1_RndPrimDraw(&Obj->Prims[i]);
   DS1_RndMatrWorld = MSave;
-}/* End of 'DS1_PrimDraw' function */
+} /* End of 'DS1_RndObjDraw' function */
+
+/* Object free function.
+ * ARGUMENTS:
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
+ * RETURNS: None.
+ */
+VOID DS1_RndObjFree( ds1OBJ *Obj )
+{
+  INT i;
+
+  for (i = 0; i < Obj->NumOfPrims; i++)
+    DS1_RndPrimFree(&Obj->Prims[i]);
+  free(Obj->Prims);
+  memset(Obj, 0, sizeof(ds1OBJ));
+} /* End of 'DS1_RndObjFree' function */
 
 /* END OF 'OBJ3D.C' FILE */

@@ -18,6 +18,28 @@ typedef struct
   ds1COLOR C;  /* Vertex color */
 } ds1VERTEX;
 
+/* Primitive representation type */
+typedef struct
+{
+  /* OpenGL buffers */
+  INT
+    VA,       /* Vertex array */
+    VBuf,     /* Vertex buffer */
+    IBuf;     /* Index buffer */
+  INT NumOfI; /* Facets index array size */
+  MATR M;     /* Primitive transformation matrix */
+  INT MtlNo;  /* Material number */
+  INT Id;     /* Primitive Id */
+} ds1PRIM;
+
+/* Object representation type */
+typedef struct
+{
+  ds1PRIM *Prims; /* Primitives array */
+  INT NumOfPrims; /* Primitives array size */
+  MATR M;         /* Object transformation matrix */
+} ds1OBJ;
+
 /* Material representation type */
 typedef struct
 {
@@ -27,26 +49,6 @@ typedef struct
   INT TexW, TexH; /* Textiure image size */
   INT TexNo;      /* For load: bytes per pixel, in use: OpenGL texture no */
 } ds1MTL;
-
-/* Primitive representation type */
-typedef struct
-{
-  /* OpenGL buffers */
-  INT
-    VA,   /* Vertex array */
-    VBuf, /* Vertex buffer */
-    IBuf; /* Index buffer */
-  INT NumOfI;       /* Facets index array size */
-  MATR M; /* Primitive transformation matrix */
-  INT MtlNo; /* Material number */
-} ds1PRIM;
-
-/* Object representation type */
-typedef struct
-{
-  ds1PRIM *Prims;
-  INT NumOfPrims;
-} ds1OBJ;
 
 extern MATR DS1_RndMatrWorld, DS1_RndMatrView, DS1_RndMatrProj;
 extern DBL DS1_RndProjSize, DS1_RndProjDist, DS1_RndFarClip;
@@ -63,43 +65,9 @@ extern INT DS1_RndNumOfMaterials;
  */
 VOID DS1_RndSetProj( VOID );
 
-/* Object draw function.
- * ARGUMENTS:
- *   - object structure pointer:
- *       ds1OBJ *Obj;
- * RETURNS: None.
- */
-VOID DS1_RndObjDraw( ds1OBJ *Obj );
-
-/* Load object from '*.g3d' file function.
- * ARGUMENTS:
- *   - object structure pointer:
- *       ds1OBJ *Obj;
- *   - file name:
- *       CHAR *FileName;
- * RETURNS:
- *   (BOOL) TRUE is success, FALSE otherwise.
- */
-BOOL DS1_RndObjLoad( ds1OBJ *Obj, CHAR *FileName );
-
-/* Object free function.
- * ARGUMENTS:
- *   - object structure pointer:
- *       ds1OBJ *Obj;
- * RETURNS: None.
- */
-VOID DS1_RndObjFree( ds1OBJ *Obj );
-
-/* Load primitive from '*.g3d' file function.
- * ARGUMENTS:
- *   - primitive structure pointer:
- *       ds1PRIM *Pr;
- *   - file name:
- *       CHAR *FileName;
- * RETURNS:
- *   (BOOL) TRUE is success, FALSE otherwise.
- */
-BOOL DS1_RndPrimLoad( ds1PRIM *Pr, CHAR *FileName );
+/*** 
+ * Shader handle funclion difinition
+ ***/
 
 /* Shader program load function.
  * ARGUMENTS:
@@ -118,6 +86,10 @@ VOID DS1_RndShaderFree( UINT Prg );
  */
 UINT DS1_RndShaderLoad( CHAR *FileNamePrefix );
 
+/*** 
+ * Material handle funclion difinition
+ ***/
+
 /* Material find by name function.
  * ARGUMENTS:
  *   - material name:
@@ -135,6 +107,80 @@ INT DS1_RndFindMaterial( CHAR *Name );
 */
 VOID DS1_RndLoadMaterials( CHAR *FileName );
 
+/*** 
+ * Object handle funclion difinition
+ ***/
+
+/* Object create function.
+ * ARGUMENTS:
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
+ * RETURNS: None.
+ */
+VOID DS1_RndObjCreate( ds1OBJ *Obj );
+
+/* Object free function.
+ * ARGUMENTS:
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
+ * RETURNS: None.
+ */
+VOID DS1_RndObjFree( ds1OBJ *Obj );
+
+/* Load object from '*.g3d' file function.
+ * ARGUMENTS:
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
+ *   - file name:
+ *       CHAR *FileName;
+ * RETURNS:
+ *   (BOOL) TRUE is success, FALSE otherwise.
+ */
+BOOL DS1_RndObjLoad( ds1OBJ *Obj, CHAR *FileName );
+
+/* Object draw function.
+ * ARGUMENTS:
+ *   - object structure pointer:
+ *       ds1OBJ *Obj;
+ * RETURNS: None.
+ */
+VOID DS1_RndObjDraw( ds1OBJ *Obj );
+
+/*** 
+ * Primitive handle funclion difinition
+ ***/
+
+/* Primitive create function.
+ * ARGUMENTS:
+ *   - primitive structure pointer:
+ *       ds1PRIM *Pr;
+ *   - vertex array:
+ *       ds1VERTEX *V;
+ *   - vertex array size:
+ *       INT NumOfV;
+ *   - index array:
+ *       INT *I;
+ *   - INT array size:
+ *       INT NumOfI;
+ * RETURNS: None.
+ */
+VOID DS1_RndPrimCreate( ds1PRIM *Pr, ds1VERTEX *V, INT NumOfV, INT *I, INT NumOfI );
+
+/* Primitive free function.
+ * ARGUMENTS:
+ *   - primitive structure pointer:
+ *       ds1PRIM *Pr;
+ * RETURNS: None.
+ */
+VOID DS1_RndPrimFree( ds1PRIM *Pr );
+
+/* Primitive draw function.
+ * ARGUMENTS:
+ *   - primitive structure pointer:
+ *       ds1PRIM *Pr;
+ * RETURNS: None.
+ */
+VOID DS1_RndPrimDraw( ds1PRIM *Pr );
 
 #endif /* __RENDER_H_ */
 
