@@ -56,8 +56,9 @@ static VOID DS1_UnitRender( ds1UNIT_PORT *Uni, ds1ANIM *Ani )
   FLT ScaleA = 1, Sd = 100, ScaleB = 4;
   DS1_RndMatrWorld = MatrixScale(DS1_Scale, DS1_Scale, DS1_Scale);
   /*MatrMulMatr(MatrixScale(0.01, 0.01, 0.01), MatrixTranslate(Uni->Pos.X, Uni->Pos.Y, Uni->Pos.Z));*/
+  /*
   DS1_RndObjDraw(&Uni->Port.Obj);
-
+  */
   DS1_RndMatrWorld = MatrixScale(ScaleA * ScaleB, 1, ScaleA);
   DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrixTranslate(Sd * ScaleA * (ScaleB - 0.5), 0, -Sd *(ScaleA +  ScaleA)));
   DS1_RndObjDraw(&Uni->Port.RWI);

@@ -200,33 +200,53 @@
 					>
 				</File>
 				<File
-					RelativePath=".\GRID.C"
-					>
-				</File>
-				<File
-					RelativePath=".\GRID.H"
-					>
-				</File>
-				<File
-					RelativePath=".\LOADOBJ.C"
-					>
-				</File>
-				<File
-					RelativePath=".\RENDER.C"
-					>
-				</File>
-				<File
-					RelativePath=".\RENDER.H"
-					>
-				</File>
-				<File
-					RelativePath=".\SHADERS.C"
-					>
-				</File>
-				<File
 					RelativePath=".\UNITS.C"
 					>
 				</File>
+				<Filter
+					Name="Render"
+					>
+					<File
+						RelativePath=".\LOADOBJ.C"
+						>
+					</File>
+					<File
+						RelativePath=".\RENDER.C"
+						>
+					</File>
+					<File
+						RelativePath=".\RENDER.H"
+						>
+					</File>
+					<File
+						RelativePath=".\SHADERS.C"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Specials"
+					>
+					<File
+						RelativePath=".\GRID.C"
+						>
+					</File>
+					<File
+						RelativePath=".\GRID.H"
+						>
+					</File>
+					<File
+						RelativePath=".\MTL.C"
+						>
+					</File>
+					<File
+						RelativePath=".\OBJ3D.C"
+						>
+					</File>
+					<File
+						RelativePath=".\PRIM.C"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Unit samples"

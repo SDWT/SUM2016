@@ -9,6 +9,9 @@
 #include "u_scene.h"
 #include "anim.h"
 
+FLT DS1_AIRPLN_ANGLE = {0};
+INT DS1_AIRPLN_SPEED = 0;
+
 /* Unit plane initialization function.
  * ARGUMENTS:
  *   - self-pointer to unit object:
@@ -47,8 +50,14 @@ static VOID DS1_UnitClose( ds1UNIT_PLANE *Uni, ds1ANIM *Ani )
  */
 static VOID DS1_UnitRender( ds1UNIT_PLANE *Uni, ds1ANIM *Ani )
 {
+  VEC Dir = Uni->Plane.Pos;
+  Dir = Dir;
+  /*Uni->Plane.Obj.Prims[8].M = ;*/
+  DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrRotateZ(DS1_AIRPLN_ANGLE * 10));
+  DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrixTranslate(0, 0, -DS1_AIRPLN_SPEED));
+
   DS1_RndMatrWorld = MatrMulMatr(MatrMulMatr(DS1_RndMatrWorld, MatrixScale(DS1_Scale, DS1_Scale, DS1_Scale)), MatrRotateX(-90));
-  /*DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrixTranslate(Uni->Plane.Pos.X, Uni->Plane.Pos.Y, Uni->Plane.Pos.Z));*/
+  DS1_RndMatrWorld = MatrMulMatr(DS1_RndMatrWorld, MatrixTranslate(Uni->Plane.Pos.X, Uni->Plane.Pos.Y, Uni->Plane.Pos.Z));
   /*MatrMulMatr(MatrixScale(0.01, 0.01, 0.01), MatrixTranslate(Uni->Pos.X, Uni->Pos.Y, Uni->Pos.Z));*/
   DS1_RndObjDraw(&Uni->Plane.Obj);
 } /* End of 'DS1_UnitRender' function */

@@ -63,6 +63,9 @@ BOOL DS1_GridCreatePlane( ds1GRID *G, INT N, INT M, VEC Dir, VEC Right )
   for (i = 0; i < N; i++)
     for (j = 0; j < M; j++)
     {
+      G->P[M * i + j].P = VecAddVec(VecMullNum(VecSet(0, 0, 1), i), VecMullNum(VecSet(1, 0, 0), j));
+      G->P[M * i + j].N = VecSet(0, 1, 0);
+
       G->P[M * i + j].P = VecAddVec(VecMullNum(DirN, i), VecMullNum(RigN, j));
       G->P[M * i + j].N = Up;
     }
@@ -155,14 +158,14 @@ BOOL DS1_GridCreateObj( ds1GRID *G, ds1OBJ *Obj, INT MtlNumber )
     }
 
   /* Create OpenGL buffers */
-  glGenVertexArrays(1, &Obj->Prims[p].VA);
-  glGenBuffers(1, &Obj->Prims[p].VBuf);
-  glGenBuffers(1, &Obj->Prims[p].IBuf);
+  glGenVertexArrays(1, &Obj->Prims[0].VA);
+  glGenBuffers(1, &Obj->Prims[0].VBuf);
+  glGenBuffers(1, &Obj->Prims[0].IBuf);
 
   /* Activate vertex array */
-  glBindVertexArray(Obj->Prims[p].VA);
+  glBindVertexArray(Obj->Prims[0].VA);
   /* Activate vertex buffer */
-  glBindBuffer(GL_ARRAY_BUFFER, Obj->Prims[p].VBuf);
+  glBindBuffer(GL_ARRAY_BUFFER, Obj->Prims[0].VBuf);
   /* Store vertex data */
   glBufferData(GL_ARRAY_BUFFER, sizeof(ds1VERTEX) * NumOfV, G->P, GL_STATIC_DRAW);
 

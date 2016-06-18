@@ -17,6 +17,8 @@ typedef struct
 /* Global system info on display */
 BOOL DS1_IsSysInfo = 0, DS1_IsKeyInfo = 0;
 
+extern FLT DS1_AIRPLN_ANGLE;
+extern INT DS1_AIRPLN_SPEED; 
 /* Unit ball initialization function.
  * ARGUMENTS:
  *   - self-pointer to unit object:
@@ -54,9 +56,9 @@ static VOID DS1_UnitResponse( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
   if (Ani->KeysClick[VK_F8])
     DS1_IsPart = !DS1_IsPart;
 
-  if (Ani->KeysClick['A'])
+  if (Ani->KeysClick[VK_F9])
     Zero.X += 10000 * DS1_Scale;
-  if (Ani->KeysClick['D'] && Zero.X > 0)
+  if (Ani->KeysClick[VK_F10] && Zero.X > 0)
     Zero.X -= 10000 * DS1_Scale;
   if (Ani->KeysClick[VK_F5])
     DS1_Scale /= 10;
@@ -67,6 +69,15 @@ static VOID DS1_UnitResponse( ds1UNIT_CONTROL *Uni, ds1ANIM *Ani )
     Ani->ShNo = 1;
   if (Ani->KeysClick['2'])
     Ani->ShNo = 2;
+
+  if (Ani->KeysClick['W'])
+    DS1_AIRPLN_SPEED++;
+  if (Ani->KeysClick['S'])
+    DS1_AIRPLN_SPEED--;
+  if (Ani->Keys['A'])
+    DS1_AIRPLN_ANGLE += Ani->DeltaTime;
+  if (Ani->Keys['D'])
+    DS1_AIRPLN_ANGLE -= Ani->DeltaTime;
 
 
   if (Ani->KeysClick['R'])

@@ -119,6 +119,10 @@ VOID DS1_RndObjDraw( ds1OBJ *Obj )
       glUniform1f(loc, DS1_Anim.Time);
     if ((loc = glGetUniformLocation(DS1_RndPrg, "PartNo")) != -1)
       glUniform1i(loc, i);
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "IsPart")) != -1)
+      glUniform1i(loc, DS1_IsPart);    
+    if ((loc = glGetUniformLocation(DS1_RndPrg, "IsNor")) != -1)
+      glUniform1i(loc, DS1_IsNor);
 
     /* Activete primitive vertex array */
     glBindVertexArray(Obj->Prims[i].VA);
@@ -233,5 +237,21 @@ VOID DS1_RndLoadMaterials( CHAR *FileName )
   }
   fclose(F);
 } /* End of 'DS1_RndLoadMaterials' function */
+
+/*
+Prim +Id,
+
+(BOOL) PrimCreate(ds1Prim *Prim, *V, NumOfV, *I, NumOfI ...)
+(VOID) PrimDraw(ds1Prim *Prim)
+(VOID) PrimFree(ds1Prim *Prim)
+*/
+
+/*
+Obj
+(VOID) ObjCreate(ds1Obj *Obj)
+(VOID) ObjAddPrim(ds1Obj *Obj, ds1Prim *Prim)
+(VOID) ObjDraw(ds1Obj *Obj)
+(VOID) ObjFree(ds1Obj *Obj)
+*/
 
 /* END OF 'RENDER.C' FILE */
